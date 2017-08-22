@@ -52,7 +52,7 @@
 <ul class="simple">
 </ul>
 </div>
-<p>A framework to manage macOS and Linux client systems using ansible-pull.</p>
+<p>A framework to manage and apply macOS and Linux client configurations using ansible-pull.</p>
 <p>The ANTS Framework is developed by the Client Services Team of the <a class="reference external" href="https://www.unibas.ch/">University of Basel</a> <a class="reference external" href="https://its.unibas.ch">IT Services</a>
 and released under the <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License Version 3</a>. <a class="reference external" href="https://docs.ansible.com/ansible/latest/index.html">Ansible</a> is a trademark of <a class="reference external" href="https://www.redhat.com">Red Hat, Inc.</a></p>
 <div class="section" id="introduction">
@@ -68,7 +68,7 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 </div>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>This project assumes you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
+<p>This project assumes that you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
 , <a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">Git Submodules</a> and the shell.</p>
 </div>
 <div class="section" id="getting-started">
@@ -118,8 +118,15 @@ You need an inventory source and a script that can read and return it in the
 <p>By default, ANTS will run a dummy script that will just return your hostname and localhost belonging to a group
 named <em>ants-common</em>.</p>
 <p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad.py</span></tt> which will connect to your Active Directory and return all groups your
-host is a member of. Just add your configuration to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
+host is a member of. Just add your configuration to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>. Note that read only rights for the
+Active Directory user are sufficient.</p>
 <p>By using a dynamic inventory source, you can assign roles using AD and let ANTS handle the configuration.</p>
+<div class="section" id="group-layout-in-active-directory">
+<h4>Group Layout in Active Directory<a class="headerlink" href="#group-layout-in-active-directory" title="Permalink to this headline">¶</a></h4>
+<p>The groups in Active Directory must have the same names as the mappings and the variables you want to assign
+using Ansible. We recommend to keep the groups in a dedicated Organizational Unit to naming naming collisions.</p>
+<p>Nested groups with access restrictions are an easy way to offer rights delegation to other units in your organization.</p>
+</div>
 </div>
 </div>
 <div class="section" id="what-else-do-i-need">
@@ -450,7 +457,10 @@ entered on the command line.</p>
 <li><a class="reference internal" href="#look-at-the-configuration">Look at the configuration</a></li>
 <li><a class="reference internal" href="#run-other-roles">Run other roles</a></li>
 <li><a class="reference internal" href="#add-ssh-authentication-to-your-repo">Add ssh authentication to your repo</a></li>
-<li><a class="reference internal" href="#add-a-dynamic-inventory-source">Add a dynamic inventory source</a></li>
+<li><a class="reference internal" href="#add-a-dynamic-inventory-source">Add a dynamic inventory source</a><ul>
+<li><a class="reference internal" href="#group-layout-in-active-directory">Group Layout in Active Directory</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#what-else-do-i-need">What else do I need</a></li>
