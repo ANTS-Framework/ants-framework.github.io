@@ -53,43 +53,59 @@
 </ul>
 </div>
 <div class="section" id="ants">
-<h2># ANTS<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
+<h2>ANTS<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
 <p>_Manage macOS and Linux Client Systems using <a href="#id2"><span class="problematic" id="id3">ansible-pull_</span></a></p>
-<p>## Introduction
-Ants is a wrapper for ansible-pull that allows you to combine the powerfull
+<div class="section" id="introduction">
+<h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
+<p>Ants is a wrapper for ansible-pull that allows you to combine the powerfull
 configuration management of ansible with an inventory source of your choice.
 It also adds logging and scheduling to controll your clients.</p>
-<p>## Requirements
-This project assumes you are familiar with [ansible](<a class="reference external" href="https://www.ansible.com/">https://www.ansible.com/</a>)
+</div>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<p>This project assumes you are familiar with [ansible](<a class="reference external" href="https://www.ansible.com/">https://www.ansible.com/</a>)
 and [git submodules](<a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">https://git-scm.com/book/en/v2/Git-Tools-Submodules</a>)</p>
-<p>## Getting started
-<strong>Prerequisites</strong>: Make sure git is installed on your machine and install ansible using pip.</p>
+</div>
+<div class="section" id="getting-started">
+<h3>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
+<p><strong>Prerequisites</strong>: Make sure git is installed on your machine and install ansible using pip.</p>
 <p>Install the ants client, open the terminal and start an ants run by typing <cite>ants</cite>.</p>
 <p>Wait for ants to finish, then open another shell. You will see the message of the day.</p>
-<p>### What happened
-Executing the installer will install the ants client with a default configuration
+</div>
+<div class="section" id="what-happened">
+<h3>What happened<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h3>
+<p>Executing the installer will install the ants client with a default configuration
 to <cite>/usr/local/ants</cite>. It will also add github.com to your root <cite>known_hosts</cite> file and
 a launch daemon (macOS)/systemd service (linux) to run ants at a random point inside
 a defined interval. (The default is 15 minutes.)</p>
 <p>Running ants with default configuration will use ansible-pull to git clone a playbook repository and execute an ansible run.</p>
 <p>By default, this will add a message of the day to your macOS or linux client. Logs of all the runs are at <cite>/var/log/ants</cite>.</p>
-<p>## Where to go from here
-### Look at the configuration
-Run <cite>ants -h</cite> to see all command line options or write your own configuration.</p>
+</div>
+<div class="section" id="where-to-go-from-here">
+<h3>Where to go from here<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="look-at-the-configuration">
+<h4>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h4>
+<p>Run <cite>ants -h</cite> to see all command line options or write your own configuration.</p>
 <p>The default configuration file is at <cite>/usr/local/ants/etc/ants.cfg</cite> but ants
 will also look for a local configuration file at <cite>/etc/ants/ants.cfg</cite>.</p>
 <p>Do not change the default configuraiton file as it might be overwritten when updating ants.</p>
-<p>### Run other roles
-Fork our playbook and change the client configuration to point to your repo. Update local.yml to assign different roles to your clients.</p>
+</div>
+<div class="section" id="run-other-roles">
+<h4>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h4>
+<p>Fork our playbook and change the client configuration to point to your repo. Update local.yml to assign different roles to your clients.</p>
 <p>You can use default ansible syntax. You can use wildcard. Have a look at the
 [ansible documentation](<a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">http://docs.ansible.com/ansible/latest/playbooks_intro.html</a>)</p>
-<p>### Add ssh authentication to your repo
-Create your own private playbook, add ssh authentication and a read only ssh key to it.
+</div>
+<div class="section" id="add-ssh-authentication-to-your-repo">
+<h4>Add ssh authentication to your repo<a class="headerlink" href="#add-ssh-authentication-to-your-repo" title="Permalink to this headline">¶</a></h4>
+<p>Create your own private playbook, add ssh authentication and a read only ssh key to it.
 Use that key with ants.</p>
 <p>By default, ants will look for a private key at <cite>/usr/local/ants/etc/id_ants</cite></p>
 <p>You can generate a key with <cite>ssh-keygen -t rsa -b 4096 -N &#8216;&#8217; -C &#8220;ants client&#8221; -f /usr/local/ants/etc/id_ants</cite></p>
-<p>### Add a dynamic inventory source
-You can use any script to tell ansible-pull which tasks to run on which client.
+</div>
+<div class="section" id="add-a-dynamic-inventory-source">
+<h4>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h4>
+<p>You can use any script to tell ansible-pull which tasks to run on which client.
 You need an inventory source and a script that can read and return it in the
 [correct format.](<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</a>)</p>
 <p>By default, ants will run a dummy script that will just return your hostname and localhost belonging to a group
@@ -97,12 +113,15 @@ named <em>ants-common</em>.</p>
 <p>But we also provide <cite>inventory_ad.py</cite> which will connect to your AD and return any groups your
 machine is a member of - provided they start with the right prefix. Just add your settings to <cite>/etc/ants/ants.cfg</cite>.</p>
 <p>By using a dynamic inventory source, you can assigne roles using AD and let ants handle the configuraiton.</p>
-<p>## What else do I need
-Nothing. You just set up a configuration management using noting but your AD and Github.</p>
+</div>
+</div>
+<div class="section" id="what-else-do-i-need">
+<h3>What else do I need<a class="headerlink" href="#what-else-do-i-need" title="Permalink to this headline">¶</a></h3>
+<p>Nothing. You just set up a configuration management using noting but your AD and Github.</p>
 <p>No additional infrastructure required.</p>
 <div align="center" class="align-center"><img src="_images/ANTS_Client.svg" /></div>
 <span class="target" id="module-ants"></span><div class="section" id="id1">
-<h3>ants<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<h4>ants<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
 <p>Run ansible-pull with a set of defined parameters
 and log the content of these runs.</p>
 <dl class="function">
@@ -155,7 +174,7 @@ reserve the right to push breakting changed.</p>
 
 </div>
 <span class="target" id="module-inventory_default"></span><div class="section" id="inventory-default">
-<h3>inventory_default<a class="headerlink" href="#inventory-default" title="Permalink to this headline">¶</a></h3>
+<h4>inventory_default<a class="headerlink" href="#inventory-default" title="Permalink to this headline">¶</a></h4>
 <p>Default inventory script.</p>
 <p>This is a dummy inventory script to bootstrap ants.
 It will return localhost and fqdn as members of
@@ -171,7 +190,7 @@ is the prefered way of running ants.</p>
 
 </div>
 <span class="target" id="module-inventory_ad"></span><div class="section" id="inventory-ad">
-<h3>inventory_ad<a class="headerlink" href="#inventory-ad" title="Permalink to this headline">¶</a></h3>
+<h4>inventory_ad<a class="headerlink" href="#inventory-ad" title="Permalink to this headline">¶</a></h4>
 <p>This script is an Ansible Dynamic Inventory script. It takes the host name of a
 client, searches for it in MS Active Directory and returns it&#8217;s groups. The
 groups are filtered by prefix and Active Directory Organizational Unit.</p>
@@ -244,7 +263,7 @@ to be bound to AD it just has to exist.</p>
 
 </div>
 <span class="target" id="module-configer"></span><div class="section" id="configer">
-<h3>configer<a class="headerlink" href="#configer" title="Permalink to this headline">¶</a></h3>
+<h4>configer<a class="headerlink" href="#configer" title="Permalink to this headline">¶</a></h4>
 <p>Handle parsing of configuraiton file options.</p>
 <dl class="function">
 <dt id="configer.get_config">
@@ -256,7 +275,7 @@ in config file.</p>
 
 </div>
 <span class="target" id="module-logger"></span><div class="section" id="logger">
-<h3>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h3>
+<h4>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h4>
 <p>Handle logging.</p>
 <dl class="function">
 <dt id="logger.create_log_dir">
@@ -312,7 +331,7 @@ on a per run basis. Hence, rotate them at the start of each run.</p>
 
 </div>
 <span class="target" id="module-argparser"></span><div class="section" id="argparser">
-<h3>argparser<a class="headerlink" href="#argparser" title="Permalink to this headline">¶</a></h3>
+<h4>argparser<a class="headerlink" href="#argparser" title="Permalink to this headline">¶</a></h4>
 <p>Custom argparse actions and main argparse are
 defined here.</p>
 <dl class="class">
@@ -356,7 +375,7 @@ entered on the command line.</p>
 
 </div>
 <span class="target" id="module-inventory"></span><div class="section" id="inventory">
-<h3>inventory<a class="headerlink" href="#inventory" title="Permalink to this headline">¶</a></h3>
+<h4>inventory<a class="headerlink" href="#inventory" title="Permalink to this headline">¶</a></h4>
 <p>Utility functions for inventory scripts.</p>
 <dl class="function">
 <dt id="inventory.format_output">
@@ -393,6 +412,7 @@ entered on the command line.</p>
 </div>
 </div>
 </div>
+</div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
@@ -411,7 +431,19 @@ entered on the command line.</p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to ants&#8217;s documentation!</a><ul>
-<li><a class="reference internal" href="#ants"># ANTS</a><ul>
+<li><a class="reference internal" href="#ants">ANTS</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#what-happened">What happened</a></li>
+<li><a class="reference internal" href="#where-to-go-from-here">Where to go from here</a><ul>
+<li><a class="reference internal" href="#look-at-the-configuration">Look at the configuration</a></li>
+<li><a class="reference internal" href="#run-other-roles">Run other roles</a></li>
+<li><a class="reference internal" href="#add-ssh-authentication-to-your-repo">Add ssh authentication to your repo</a></li>
+<li><a class="reference internal" href="#add-a-dynamic-inventory-source">Add a dynamic inventory source</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#what-else-do-i-need">What else do I need</a><ul>
 <li><a class="reference internal" href="#id1">ants</a></li>
 <li><a class="reference internal" href="#inventory-default">inventory_default</a></li>
 <li><a class="reference internal" href="#inventory-ad">inventory_ad</a></li>
@@ -419,6 +451,8 @@ entered on the command line.</p>
 <li><a class="reference internal" href="#logger">logger</a></li>
 <li><a class="reference internal" href="#argparser">argparser</a></li>
 <li><a class="reference internal" href="#inventory">inventory</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
