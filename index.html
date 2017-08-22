@@ -52,11 +52,9 @@
 <ul class="simple">
 </ul>
 </div>
-<div class="section" id="ants">
-<h2>ANTS<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
-<p>Manage macOS and Linux Client Systems using ansible-pull.</p>
+<p>Manage macOS and Linux client systems using ansible-pull.</p>
 <div class="section" id="introduction">
-<h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The ANTS Framework consists of the following components:</p>
 <ul class="simple">
 <li>A wrapper for Ansible-Pull</li>
@@ -67,12 +65,12 @@
 <div align="center" class="align-center"><img src="_images/ANTS_Client.svg" /></div>
 </div>
 <div class="section" id="requirements">
-<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>This project assumes you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
 , <a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">Git Submodules</a> and the shell.</p>
 </div>
 <div class="section" id="getting-started">
-<h3>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>Make sure GIT and Ansible are installed. If not install it via your favourite package manage (e.g. pip or yum).</li>
 <li>Install the ANTS client, open the terminal and start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants</span></tt>.</li>
@@ -80,54 +78,58 @@
 </ol>
 </div>
 <div class="section" id="what-happened">
-<h3>What happened<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h3>
+<h2>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h2>
 <p>Executing the installer will install the ANTS client with a default configuration
-to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>. It will also add github.com to your root <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file and
-a launch daemon (macOS)/systemd service (linux) to run ANTS at a random point inside
+to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>. It will also add github.com to your root users <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file and
+a launch daemon (macOS)/cron entry (Linux) to run ANTS at a random point in time within
 a defined interval. (The default is 15 minutes.)</p>
-<p>Running ANTS with default configuration will use ansible-pull to git clone a playbook repository and execute an ansible run.</p>
-<p>By default, this will add a message of the day to your macOS or linux client. Logs of all the runs are at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
+<p>Running ANTS with the default configuration will use ansible-pull to git clone the ANTS playbook repository and execute an ansible run.</p>
+<p>By default, this will add a message of the day to your macOS or Linux client. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
 </div>
 <div class="section" id="where-to-go-from-here">
-<h3>Where to go from here<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h3>
+<h2>Where to go from here?<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="look-at-the-configuration">
-<h4>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h4>
+<h3>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h3>
 <p>Run <tt class="docutils literal"><span class="pre">ants</span> <span class="pre">-h</span></tt> to see all command line options or write your own configuration.</p>
 <p>The default configuration file is at <tt class="docutils literal"><span class="pre">/usr/local/ants/etc/ants.cfg</span></tt> but ANTS
 will also look for a local configuration file at <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
-<p>Do not change the default configuraiton file as it might be overwritten when updating ANTS.</p>
+<p>Do not modify the default configuration file as it might be overwritten when updating ANTS.</p>
 </div>
 <div class="section" id="run-other-roles">
-<h4>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h4>
-<p>Fork our playbook and change the client configuration to point to your repo. Update local.yml to assign different roles to your clients.</p>
-<p>You can use default ansible syntax. You can use wildcard. Have a look at the
+<h3>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h3>
+<p>Fork our playbook and change the client configuration to point to your repository. Update local.yml to assign different roles to your clients.</p>
+<p>You can use the default Ansible syntax. You can also use wildcards. Have a look at the
 <a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">Ansible documentation</a></p>
 </div>
 <div class="section" id="add-ssh-authentication-to-your-repo">
-<h4>Add ssh authentication to your repo<a class="headerlink" href="#add-ssh-authentication-to-your-repo" title="Permalink to this headline">¶</a></h4>
-<p>Create your own private playbook, add ssh authentication and a read only ssh key to it.
-Use that key with ANTS.</p>
+<h3>Add ssh authentication to your repo<a class="headerlink" href="#add-ssh-authentication-to-your-repo" title="Permalink to this headline">¶</a></h3>
+<p>Create your own private playbook, add a ssh authentication and a read only ssh key to it.
+Configure ANTS to use that key.</p>
 <p>By default, ANTS will look for a private key at <tt class="docutils literal"><span class="pre">/usr/local/ants/etc/id_ants</span></tt></p>
 <p>You can generate a key with <tt class="docutils literal"><span class="pre">ssh-keygen</span> <span class="pre">-t</span> <span class="pre">rsa</span> <span class="pre">-b</span> <span class="pre">4096</span> <span class="pre">-N</span> <span class="pre">''</span> <span class="pre">-C</span> <span class="pre">&quot;ants</span> <span class="pre">client&quot;</span> <span class="pre">-f</span> <span class="pre">/usr/local/ants/etc/id_ants</span></tt></p>
 </div>
 <div class="section" id="add-a-dynamic-inventory-source">
-<h4>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h4>
-<p>You can use any script to tell ansible-pull which tasks to run on which client.
+<h3>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h3>
+<p>You can use scripts to tell ansible-pull which tasks to run on which client.
 You need an inventory source and a script that can read and return it in the
 <a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">correct format:</a></p>
 <p>By default, ANTS will run a dummy script that will just return your hostname and localhost belonging to a group
 named <strong>ants-common</strong>.</p>
-<p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad.py</span></tt> which will connect to your AD and return any groups your
-machine is a member of - provided they start with the right prefix. Just add your settings to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
-<p>By using a dynamic inventory source, you can assigne roles using AD and let ANTS handle the configuraiton.</p>
+<p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad.py</span></tt> which will connect to your Active Directory and return all groups your
+host is a member of. Just add your configuration to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
+<p>By using a dynamic inventory source, you can assign roles using AD and let ANTS handle the configuration.</p>
 </div>
 </div>
 <div class="section" id="what-else-do-i-need">
-<h3>What else do I need<a class="headerlink" href="#what-else-do-i-need" title="Permalink to this headline">¶</a></h3>
-<p>Nothing. You just set up a configuration management using noting but your AD and Github.</p>
+<h2>What else do I need<a class="headerlink" href="#what-else-do-i-need" title="Permalink to this headline">¶</a></h2>
+<p>Nothing. You just set up a configuration management using your AD and Github.</p>
 <p>No additional infrastructure required.</p>
-<span class="target" id="module-ants"></span><div class="section" id="id1">
-<h4>ants<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="module-ants">
+<span id="development-documentation"></span><h1>Development Documentation<a class="headerlink" href="#module-ants" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="ants">
+<h2>ants<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
 <p>Run ansible-pull with a set of defined parameters
 and log the content of these runs.</p>
 <dl class="function">
@@ -180,7 +182,7 @@ reserve the right to push breakting changed.</p>
 
 </div>
 <span class="target" id="module-inventory_default"></span><div class="section" id="inventory-default">
-<h4>inventory_default<a class="headerlink" href="#inventory-default" title="Permalink to this headline">¶</a></h4>
+<h2>inventory_default<a class="headerlink" href="#inventory-default" title="Permalink to this headline">¶</a></h2>
 <p>Default inventory script.</p>
 <p>This is a dummy inventory script to bootstrap ants.
 It will return localhost and fqdn as members of
@@ -196,7 +198,7 @@ is the prefered way of running ants.</p>
 
 </div>
 <span class="target" id="module-inventory_ad"></span><div class="section" id="inventory-ad">
-<h4>inventory_ad<a class="headerlink" href="#inventory-ad" title="Permalink to this headline">¶</a></h4>
+<h2>inventory_ad<a class="headerlink" href="#inventory-ad" title="Permalink to this headline">¶</a></h2>
 <p>This script is an Ansible Dynamic Inventory script. It takes the host name of a
 client, searches for it in MS Active Directory and returns it&#8217;s groups. The
 groups are filtered by prefix and Active Directory Organizational Unit.</p>
@@ -269,7 +271,7 @@ to be bound to AD it just has to exist.</p>
 
 </div>
 <span class="target" id="module-configer"></span><div class="section" id="configer">
-<h4>configer<a class="headerlink" href="#configer" title="Permalink to this headline">¶</a></h4>
+<h2>configer<a class="headerlink" href="#configer" title="Permalink to this headline">¶</a></h2>
 <p>Handle parsing of configuraiton file options.</p>
 <dl class="function">
 <dt id="configer.get_config">
@@ -281,7 +283,7 @@ in config file.</p>
 
 </div>
 <span class="target" id="module-logger"></span><div class="section" id="logger">
-<h4>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h4>
+<h2>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h2>
 <p>Handle logging.</p>
 <dl class="function">
 <dt id="logger.create_log_dir">
@@ -337,7 +339,7 @@ on a per run basis. Hence, rotate them at the start of each run.</p>
 
 </div>
 <span class="target" id="module-argparser"></span><div class="section" id="argparser">
-<h4>argparser<a class="headerlink" href="#argparser" title="Permalink to this headline">¶</a></h4>
+<h2>argparser<a class="headerlink" href="#argparser" title="Permalink to this headline">¶</a></h2>
 <p>Custom argparse actions and main argparse are
 defined here.</p>
 <dl class="class">
@@ -381,7 +383,7 @@ entered on the command line.</p>
 
 </div>
 <span class="target" id="module-inventory"></span><div class="section" id="inventory">
-<h4>inventory<a class="headerlink" href="#inventory" title="Permalink to this headline">¶</a></h4>
+<h2>inventory<a class="headerlink" href="#inventory" title="Permalink to this headline">¶</a></h2>
 <p>Utility functions for inventory scripts.</p>
 <dl class="function">
 <dt id="inventory.format_output">
@@ -417,8 +419,6 @@ entered on the command line.</p>
 
 </div>
 </div>
-</div>
-</div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
@@ -437,30 +437,28 @@ entered on the command line.</p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to the ANTS Framework documentation!</a><ul>
-<li><a class="reference internal" href="#ants">ANTS</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#getting-started">Getting started</a></li>
-<li><a class="reference internal" href="#what-happened">What happened</a></li>
-<li><a class="reference internal" href="#where-to-go-from-here">Where to go from here</a><ul>
+<li><a class="reference internal" href="#what-happened">What happened?</a></li>
+<li><a class="reference internal" href="#where-to-go-from-here">Where to go from here?</a><ul>
 <li><a class="reference internal" href="#look-at-the-configuration">Look at the configuration</a></li>
 <li><a class="reference internal" href="#run-other-roles">Run other roles</a></li>
 <li><a class="reference internal" href="#add-ssh-authentication-to-your-repo">Add ssh authentication to your repo</a></li>
 <li><a class="reference internal" href="#add-a-dynamic-inventory-source">Add a dynamic inventory source</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#what-else-do-i-need">What else do I need</a><ul>
-<li><a class="reference internal" href="#id1">ants</a></li>
+<li><a class="reference internal" href="#what-else-do-i-need">What else do I need</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ants">Development Documentation</a><ul>
+<li><a class="reference internal" href="#ants">ants</a></li>
 <li><a class="reference internal" href="#inventory-default">inventory_default</a></li>
 <li><a class="reference internal" href="#inventory-ad">inventory_ad</a></li>
 <li><a class="reference internal" href="#configer">configer</a></li>
 <li><a class="reference internal" href="#logger">logger</a></li>
 <li><a class="reference internal" href="#argparser">argparser</a></li>
 <li><a class="reference internal" href="#inventory">inventory</a></li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
