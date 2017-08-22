@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to the ANTS Framework documentation! &mdash; ANTS Framework 1.0 documentation</title>
+    <title>Welcome to the ANTS Framework &mdash; ANTS Framework 1.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -46,13 +46,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-the-ants-framework-documentation">
-<h1>Welcome to the ANTS Framework documentation!<a class="headerlink" href="#welcome-to-the-ants-framework-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-the-ants-framework">
+<h1>Welcome to the ANTS Framework<a class="headerlink" href="#welcome-to-the-ants-framework" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
-<p>Manage macOS and Linux client systems using ansible-pull.</p>
+<p>A framework to manage macOS and Linux client systems using ansible-pull.</p>
 <p>The ANTS Framework is developed by the Client Services Team of the University of Basel IT Services.</p>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
@@ -77,15 +77,15 @@
 <li>Install the ANTS client, open the terminal and start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants</span></tt>.</li>
 <li>Wait for ANTS to finish, then open another shell. You will see the message of the day.</li>
 </ol>
-</div>
 <div class="section" id="what-happened">
-<h2>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h2>
+<h3>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h3>
 <p>Executing the installer will install the ANTS client with a default configuration
 to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>. It will also add github.com to your root users <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file and
 a launch daemon (macOS)/cron entry (Linux) to run ANTS at a random point in time within
 a defined interval. (The default is 15 minutes.)</p>
 <p>Running ANTS with the default configuration will use ansible-pull to git clone the ANTS playbook repository and execute an ansible run.</p>
 <p>By default, this will add a message of the day to your macOS or Linux client. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
+</div>
 </div>
 <div class="section" id="where-to-go-from-here">
 <h2>Where to go from here?<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h2>
@@ -438,11 +438,13 @@ entered on the command line.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to the ANTS Framework documentation!</a><ul>
+<li><a class="reference internal" href="#">Welcome to the ANTS Framework</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
-<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#getting-started">Getting started</a><ul>
 <li><a class="reference internal" href="#what-happened">What happened?</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#where-to-go-from-here">Where to go from here?</a><ul>
 <li><a class="reference internal" href="#look-at-the-configuration">Look at the configuration</a></li>
 <li><a class="reference internal" href="#run-other-roles">Run other roles</a></li>
