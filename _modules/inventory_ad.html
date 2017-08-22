@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>inventory_ad &mdash; ANTS Framework 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="ANTS Framework 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ANTS Framework 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for inventory_ad</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;inventory_ad</span>
+<span class="sd">===============</span>
+
+
+<span class="sd">This script is an Ansible Dynamic Inventory script. It takes the host name of a</span>
+<span class="sd">client, searches for it in MS Active Directory and returns it&#39;s groups. The</span>
+<span class="sd">groups are filtered by prefix and Active Directory Organizational Unit.</span>
+
+<span class="sd">This script returns the group and hostname in an Ansible compatible JSON</span>
+<span class="sd">format.  The script writes an offline cache file for later use if the Active</span>
+<span class="sd">Directory query succeeds. This cache is returned if the Active Directory query</span>
+<span class="sd">fails.</span>
+
+<span class="sd">It always returns the common group for common tasks. It also returns the group</span>
+<span class="sd">common-ad-bound if the result comes from an online query rather than from the</span>
+<span class="sd">cache.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;Jan Welker&quot;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s">&quot;jan.welker@unibas.ch&quot;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s">&quot;Copyright 2017, University of Basel&quot;</span>
+
+<span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Balz Aschwanden&quot;</span><span class="p">,</span> <span class="s">&quot;Jan Welker&quot;</span><span class="p">]</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s">&quot;GPL&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">ssl</span> <span class="kn">import</span> <span class="n">CERT_REQUIRED</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="n">gethostname</span>
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">dumps</span>
+<span class="kn">from</span> <span class="nn">ldap3</span> <span class="kn">import</span> <span class="n">Server</span><span class="p">,</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Tls</span><span class="p">,</span> <span class="n">NTLM</span>
+
+
+<span class="kn">from</span> <span class="nn">antslib</span> <span class="kn">import</span> <span class="n">configer</span>
+
+
+<div class="viewcode-block" id="connect_to_ad"><a class="viewcode-back" href="../index.html#inventory_ad.connect_to_ad">[docs]</a><span class="k">def</span> <span class="nf">connect_to_ad</span><span class="p">(</span><span class="n">ldap_user</span><span class="p">,</span> <span class="n">ldap_pw</span><span class="p">,</span> <span class="n">ldap_host</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Connect to Active Directory and return the connection or None.&quot;&quot;&quot;</span>
+    <span class="n">tls</span> <span class="o">=</span> <span class="n">Tls</span><span class="p">(</span><span class="n">validate</span><span class="o">=</span><span class="n">CERT_REQUIRED</span><span class="p">)</span>
+    <span class="n">server</span> <span class="o">=</span> <span class="n">Server</span><span class="p">(</span><span class="n">ldap_host</span><span class="p">,</span> <span class="n">use_ssl</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">tls</span><span class="o">=</span><span class="n">tls</span><span class="p">)</span>
+    <span class="n">connection</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">ldap_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">ldap_pw</span><span class="p">,</span>
+                            <span class="n">authentication</span><span class="o">=</span><span class="n">NTLM</span><span class="p">)</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">result</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="s">&#39;success&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">connection</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+</div>
+<div class="viewcode-block" id="get_simple_host_name"><a class="viewcode-back" href="../index.html#inventory_ad.get_simple_host_name">[docs]</a><span class="k">def</span> <span class="nf">get_simple_host_name</span><span class="p">(</span><span class="n">fqdn</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert FQDN to simple host name and return it.&quot;&quot;&quot;</span>
+    <span class="n">simple_hostname</span> <span class="o">=</span> <span class="n">fqdn</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">simple_hostname</span>
+
+</div>
+<div class="viewcode-block" id="host_exist_in_ad"><a class="viewcode-back" href="../index.html#inventory_ad.host_exist_in_ad">[docs]</a><span class="k">def</span> <span class="nf">host_exist_in_ad</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">simple_hostname</span><span class="p">,</span> <span class="n">ldap_ou</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if host can be found in Active Directory. The host does not have</span>
+<span class="sd">       to be bound to AD it just has to exist.&quot;&quot;&quot;</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ldap_ou</span><span class="p">,</span> <span class="s">&#39;(cn=</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="n">simple_hostname</span><span class="p">,</span>
+                      <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;cn&#39;</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="s">&#39;cn&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_computer_dn"><a class="viewcode-back" href="../index.html#inventory_ad.get_computer_dn">[docs]</a><span class="k">def</span> <span class="nf">get_computer_dn</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">simple_hostname</span><span class="p">,</span> <span class="n">ldap_ou</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Take the simple host name and return it&#39;s distinguished name&quot;&quot;&quot;</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ldap_ou</span><span class="p">,</span> <span class="s">&#39;(cn=</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="n">simple_hostname</span><span class="p">,</span>
+                      <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;distinguishedName&#39;</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="s">&#39;distinguishedName&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+</div>
+<div class="viewcode-block" id="get_computer_groups"><a class="viewcode-back" href="../index.html#inventory_ad.get_computer_groups">[docs]</a><span class="k">def</span> <span class="nf">get_computer_groups</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">search_base</span><span class="p">,</span> <span class="n">computer_dn</span><span class="p">,</span> <span class="n">group_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Receive groups that the computer object is a member off.</span>
+<span class="sd">    member:1.2.840.113556.1.4.1941:=%s is a special Active Directory OID that</span>
+<span class="sd">    returns nested groups and not just the first level. The result is filtered</span>
+<span class="sd">    by group prefix and Organizational Unit &quot;&quot;&quot;</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">connection</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">search_base</span><span class="p">,</span>
+                      <span class="s">&#39;(member:1.2.840.113556.1.4.1941:=</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="n">computer_dn</span><span class="p">,</span>
+                      <span class="n">attributes</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;cn&#39;</span><span class="p">])</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">response</span>
+    <span class="k">if</span> <span class="n">response</span><span class="p">:</span>
+        <span class="c"># Removing LDAP string from last line</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="c"># Extracting groups from ldap response</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">group_name</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s">&#39;attributes&#39;</span><span class="p">][</span><span class="s">&#39;cn&#39;</span><span class="p">]</span>
+            <span class="c"># Only adding groups that start with the prefix</span>
+            <span class="k">if</span> <span class="n">group_prefix</span> <span class="ow">in</span> <span class="n">group_name</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+</div>
+<div class="viewcode-block" id="format_output"><a class="viewcode-back" href="../index.html#inventory_ad.format_output">[docs]</a><span class="k">def</span> <span class="nf">format_output</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return results in Ansible JSON syntax.</span>
+
+<span class="sd">    Ansible requirements are documented here:</span>
+<span class="sd">    http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;: &#39;</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="write_cache"><a class="viewcode-back" href="../index.html#inventory_ad.write_cache">[docs]</a><span class="k">def</span> <span class="nf">write_cache</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write inventory cache to file.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">format_output</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+            <span class="n">cache</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="read_cache"><a class="viewcode-back" href="../index.html#inventory_ad.read_cache">[docs]</a><span class="k">def</span> <span class="nf">read_cache</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read cache file and return content.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cache_file</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../index.html#inventory_ad.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Fetching groups from AD and printing them in JSON.&quot;&quot;&quot;</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">configer</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span><span class="s">&#39;ad&#39;</span><span class="p">)</span>
+    <span class="n">ants_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+    <span class="n">cache_file</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ants_path</span><span class="p">,</span> <span class="s">&#39;etc&#39;</span><span class="p">,</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;CACHE_FILE&#39;</span><span class="p">])</span>
+
+    <span class="c"># Reading fully qualified host name and converting it to lower case</span>
+    <span class="n">fqdn</span> <span class="o">=</span> <span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">simple_host_name</span> <span class="o">=</span> <span class="n">get_simple_host_name</span><span class="p">(</span><span class="n">fqdn</span><span class="p">)</span>
+
+    <span class="c"># Connecting to Active Directory and check connection status</span>
+    <span class="n">ad_connection</span> <span class="o">=</span> <span class="n">connect_to_ad</span><span class="p">(</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;LDAP_USER&#39;</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;LDAP_PW&#39;</span><span class="p">],</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;LDAP_HOST&#39;</span><span class="p">])</span>
+    <span class="n">online</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">ad_connection</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">online</span><span class="p">:</span>
+        <span class="c"># Initializing output</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;COMMON_GROUP&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fqdn</span><span class="p">]</span>
+
+        <span class="c"># Checking if host is in AD</span>
+        <span class="k">if</span> <span class="n">host_exist_in_ad</span><span class="p">(</span><span class="n">ad_connection</span><span class="p">,</span> <span class="n">simple_host_name</span><span class="p">,</span>
+                            <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;LDAP_OU_COMPUTERS&#39;</span><span class="p">]):</span>
+            <span class="c"># Looking up computers distinguished name</span>
+            <span class="n">computer_dn</span> <span class="o">=</span> <span class="n">get_computer_dn</span><span class="p">(</span>
+                <span class="n">ad_connection</span><span class="p">,</span> <span class="n">simple_host_name</span><span class="p">,</span> <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;LDAP_OU_COMPUTERS&#39;</span><span class="p">])</span>
+
+            <span class="c"># Looking up computers groups</span>
+            <span class="n">computer_groups</span> <span class="o">=</span> <span class="n">get_computer_groups</span><span class="p">(</span><span class="n">ad_connection</span><span class="p">,</span>
+                                                  <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;LDAP_OU_GROUPS&#39;</span><span class="p">],</span>
+                                                  <span class="n">computer_dn</span><span class="p">,</span>
+                                                  <span class="n">cfg</span><span class="p">[</span><span class="s">&#39;GROUP_PREFIX&#39;</span><span class="p">])</span>
+            <span class="c"># Adding groups to output</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">computer_groups</span><span class="p">:</span>
+                <span class="n">output</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fqdn</span><span class="p">]</span>
+
+        <span class="c"># Writing output to cache file</span>
+        <span class="n">write_cache</span><span class="p">(</span><span class="n">cache_file</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+
+        <span class="c"># Adding online Group after cache is written.</span>
+        <span class="c"># We do not want to cache this group</span>
+        <span class="n">output</span><span class="p">[</span><span class="n">cfg</span><span class="p">[</span><span class="s">&#39;COMMON_AD_BOUND_GROUP&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fqdn</span><span class="p">]</span>
+
+        <span class="c"># Printing output in Ansible JSON syntax</span>
+        <span class="k">print</span> <span class="n">format_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+    <span class="c"># We are not bound to AD we are offline</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Reading cache file</span>
+        <span class="n">cached_output</span> <span class="o">=</span> <span class="n">read_cache</span><span class="p">(</span><span class="n">cache_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached_output</span><span class="p">:</span>
+            <span class="c"># Printing cached</span>
+            <span class="k">print</span> <span class="n">cached_output</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Printing default group</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">output</span><span class="p">[</span><span class="s">&#39;common&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">fqdn</span><span class="p">]</span>
+            <span class="k">print</span> <span class="n">format_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ANTS Framework 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2017, Balz Aschwanden, Jan Welker.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

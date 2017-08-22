@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome to ants’s documentation! &mdash; ANTS Framework 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="ANTS Framework 1.0 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">ANTS Framework 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-to-ants-s-documentation">
+<h1>Welcome to ants&#8217;s documentation!<a class="headerlink" href="#welcome-to-ants-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<div class="section" id="ants">
+<h2># ANTS<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
+<p>_Manage macOS and Linux Client Systems using <a href="#id2"><span class="problematic" id="id3">ansible-pull_</span></a></p>
+<p>## Introduction
+Ants is a wrapper for ansible-pull that allows you to combine the powerfull
+configuration management of ansible with an inventory source of your choice.
+It also adds logging and scheduling to controll your clients.</p>
+<p>## Requirements
+This project assumes you are familiar with [ansible](<a class="reference external" href="https://www.ansible.com/">https://www.ansible.com/</a>)
+and [git submodules](<a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">https://git-scm.com/book/en/v2/Git-Tools-Submodules</a>)</p>
+<p>## Getting started
+<strong>Prerequisites</strong>: Make sure git is installed on your machine and install ansible using pip.</p>
+<p>Install the ants client, open the terminal and start an ants run by typing <cite>ants</cite>.</p>
+<p>Wait for ants to finish, then open another shell. You will see the message of the day.</p>
+<p>### What happened
+Executing the installer will install the ants client with a default configuration
+to <cite>/usr/local/ants</cite>. It will also add github.com to your root <cite>known_hosts</cite> file and
+a launch daemon (macOS)/systemd service (linux) to run ants at a random point inside
+a defined interval. (The default is 15 minutes.)</p>
+<p>Running ants with default configuration will use ansible-pull to git clone a playbook repository and execute an ansible run.</p>
+<p>By default, this will add a message of the day to your macOS or linux client. Logs of all the runs are at <cite>/var/log/ants</cite>.</p>
+<p>## Where to go from here
+### Look at the configuration
+Run <cite>ants -h</cite> to see all command line options or write your own configuration.</p>
+<p>The default configuration file is at <cite>/usr/local/ants/etc/ants.cfg</cite> but ants
+will also look for a local configuration file at <cite>/etc/ants/ants.cfg</cite>.</p>
+<p>Do not change the default configuraiton file as it might be overwritten when updating ants.</p>
+<p>### Run other roles
+Fork our playbook and change the client configuration to point to your repo. Update local.yml to assign different roles to your clients.</p>
+<p>You can use default ansible syntax. You can use wildcard. Have a look at the
+[ansible documentation](<a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">http://docs.ansible.com/ansible/latest/playbooks_intro.html</a>)</p>
+<p>### Add ssh authentication to your repo
+Create your own private playbook, add ssh authentication and a read only ssh key to it.
+Use that key with ants.</p>
+<p>By default, ants will look for a private key at <cite>/usr/local/ants/etc/id_ants</cite></p>
+<p>You can generate a key with <cite>ssh-keygen -t rsa -b 4096 -N &#8216;&#8217; -C &#8220;ants client&#8221; -f /usr/local/ants/etc/id_ants</cite></p>
+<p>### Add a dynamic inventory source
+You can use any script to tell ansible-pull which tasks to run on which client.
+You need an inventory source and a script that can read and return it in the
+[correct format.](<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</a>)</p>
+<p>By default, ants will run a dummy script that will just return your hostname and localhost belonging to a group
+named <em>ants-common</em>.</p>
+<p>But we also provide <cite>inventory_ad.py</cite> which will connect to your AD and return any groups your
+machine is a member of - provided they start with the right prefix. Just add your settings to <cite>/etc/ants/ants.cfg</cite>.</p>
+<p>By using a dynamic inventory source, you can assigne roles using AD and let ants handle the configuraiton.</p>
+<p>## What else do I need
+Nothing. You just set up a configuration management using noting but your AD and Github.</p>
+<p>No additional infrastructure required.</p>
+<div align="center" class="align-center"><img src="_images/ANTS_Client.svg" /></div>
+<span class="target" id="module-ants"></span><div class="section" id="id1">
+<h3>ants<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Run ansible-pull with a set of defined parameters
+and log the content of these runs.</p>
+<dl class="function">
+<dt id="ants.parse_proc">
+<tt class="descclassname">ants.</tt><tt class="descname">parse_proc</tt><big>(</big><em>proc</em><big>)</big><a class="reference internal" href="_modules/ants.html#parse_proc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ants.parse_proc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read subprocess output and dispatch it to logger.</p>
+<dl class="docutils">
+<dt>Cases handled separately:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>task_line</dt>
+<dd><ul class="first last simple">
+<li>Line with the name of a task.</li>
+<li>Printed directly befor the task status.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>recap_line</dt>
+<dd><ul class="first last simple">
+<li>A single line a the end of an Ansible run.</li>
+<li>It indicates the number of failes/changed/ok tasks.</li>
+<li>The line after &#8216;PLAY RECAP&#8217; contains the recap</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="ants.run_ansible">
+<tt class="descclassname">ants.</tt><tt class="descname">run_ansible</tt><big>(</big><em>args</em><big>)</big><a class="reference internal" href="_modules/ants.html#run_ansible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ants.run_ansible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run ansible-pull.</p>
+<p>The ansible python api is provided as is and the core team
+reserve the right to push breakting changed.</p>
+<p>Hence, we call the cli directly and do not attempt to work with the api.</p>
+<p>Documentation:
+<a class="reference external" href="http://docs.ansible.com/ansible/dev_guide/developing_api.html">http://docs.ansible.com/ansible/dev_guide/developing_api.html</a></p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-inventory_default"></span><div class="section" id="inventory-default">
+<h3>inventory_default<a class="headerlink" href="#inventory-default" title="Permalink to this headline">¶</a></h3>
+<p>Default inventory script.</p>
+<p>This is a dummy inventory script to bootstrap ants.
+It will return localhost and fqdn as members of
+the ants-common group.</p>
+<p>These values can be used to assign roles in local.yml but
+using a dynamic inventory script like inventory_ad.py
+is the prefered way of running ants.</p>
+<dl class="function">
+<dt id="inventory_default.main">
+<tt class="descclassname">inventory_default.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/inventory_default.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_default.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print default inventory in JSON.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-inventory_ad"></span><div class="section" id="inventory-ad">
+<h3>inventory_ad<a class="headerlink" href="#inventory-ad" title="Permalink to this headline">¶</a></h3>
+<p>This script is an Ansible Dynamic Inventory script. It takes the host name of a
+client, searches for it in MS Active Directory and returns it&#8217;s groups. The
+groups are filtered by prefix and Active Directory Organizational Unit.</p>
+<p>This script returns the group and hostname in an Ansible compatible JSON
+format.  The script writes an offline cache file for later use if the Active
+Directory query succeeds. This cache is returned if the Active Directory query
+fails.</p>
+<p>It always returns the common group for common tasks. It also returns the group
+common-ad-bound if the result comes from an online query rather than from the
+cache.</p>
+<dl class="function">
+<dt id="inventory_ad.connect_to_ad">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">connect_to_ad</tt><big>(</big><em>ldap_user</em>, <em>ldap_pw</em>, <em>ldap_host</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#connect_to_ad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.connect_to_ad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to Active Directory and return the connection or None.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.format_output">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">format_output</tt><big>(</big><em>output</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#format_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.format_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return results in Ansible JSON syntax.</p>
+<p>Ansible requirements are documented here:
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.get_computer_dn">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">get_computer_dn</tt><big>(</big><em>connection</em>, <em>simple_hostname</em>, <em>ldap_ou</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#get_computer_dn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.get_computer_dn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take the simple host name and return it&#8217;s distinguished name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.get_computer_groups">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">get_computer_groups</tt><big>(</big><em>connection</em>, <em>search_base</em>, <em>computer_dn</em>, <em>group_prefix</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#get_computer_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.get_computer_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Receive groups that the computer object is a member off.
+member:1.2.840.113556.1.4.1941:=%s is a special Active Directory OID that
+returns nested groups and not just the first level. The result is filtered
+by group prefix and Organizational Unit</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.get_simple_host_name">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">get_simple_host_name</tt><big>(</big><em>fqdn</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#get_simple_host_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.get_simple_host_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert FQDN to simple host name and return it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.host_exist_in_ad">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">host_exist_in_ad</tt><big>(</big><em>connection</em>, <em>simple_hostname</em>, <em>ldap_ou</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#host_exist_in_ad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.host_exist_in_ad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if host can be found in Active Directory. The host does not have
+to be bound to AD it just has to exist.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.main">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetching groups from AD and printing them in JSON.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.read_cache">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">read_cache</tt><big>(</big><em>cache_file</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#read_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.read_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read cache file and return content.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory_ad.write_cache">
+<tt class="descclassname">inventory_ad.</tt><tt class="descname">write_cache</tt><big>(</big><em>cache_file</em>, <em>output</em><big>)</big><a class="reference internal" href="_modules/inventory_ad.html#write_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory_ad.write_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write inventory cache to file.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-configer"></span><div class="section" id="configer">
+<h3>configer<a class="headerlink" href="#configer" title="Permalink to this headline">¶</a></h3>
+<p>Handle parsing of configuraiton file options.</p>
+<dl class="function">
+<dt id="configer.get_config">
+<tt class="descclassname">configer.</tt><tt class="descname">get_config</tt><big>(</big><em>config_section</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="reference internal" href="_modules/configer.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read indicated configuraiton section and return a dict.</p>
+<p>Use config.optionxform to preserver upper/lower case letters
+in config file.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-logger"></span><div class="section" id="logger">
+<h3>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h3>
+<p>Handle logging.</p>
+<dl class="function">
+<dt id="logger.create_log_dir">
+<tt class="descclassname">logger.</tt><tt class="descname">create_log_dir</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/logger.html#create_log_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.create_log_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create log directory.</p>
+<p>Use pwd and grp to get uid/gid.
+<a class="reference external" href="https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name">https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="logger.get_logger">
+<tt class="descclassname">logger.</tt><tt class="descname">get_logger</tt><big>(</big><em>name</em>, <em>logfile=False</em>, <em>maxBytes=0</em>, <em>formatter='default'</em><big>)</big><a class="reference internal" href="_modules/logger.html#get_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.get_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return logging object with handler and formatter.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="logger.log_recap">
+<tt class="descclassname">logger.</tt><tt class="descname">log_recap</tt><big>(</big><em>start_time</em>, <em>end_time</em>, <em>status_line</em><big>)</big><a class="reference internal" href="_modules/logger.html#log_recap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.log_recap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log play recap in a dedicated form.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="logger.parse_client_status">
+<tt class="descclassname">logger.</tt><tt class="descname">parse_client_status</tt><big>(</big><em>status_line</em><big>)</big><a class="reference internal" href="_modules/logger.html#parse_client_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.parse_client_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read client status from recap log.</p>
+<p>Status can have one of the following forms:
+* ok
+* changed
+* failed</p>
+<p>We expect IndexError because play recap will be
+empty if no matching hosts were found.
+Client status will be set to failed in that case.</p>
+<p>Status will also be set to failed of no log file
+could be found.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="logger.status_file_rollover">
+<tt class="descclassname">logger.</tt><tt class="descname">status_file_rollover</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/logger.html#status_file_rollover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.status_file_rollover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate log files for ok/changed/failed at the start of every ansible run</p>
+<p>Keep track of ok/changed/failed and play recap
+on a per run basis. Hence, rotate them at the start of each run.</p>
+<p>Code for rotation based on
+<a class="reference external" href="https://stackoverflow.com/questions/4654915/rotate-logfiles-each-time-the-application-is-started-python">https://stackoverflow.com/questions/4654915/rotate-logfiles-each-time-the-application-is-started-python</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="logger.write_log">
+<tt class="descclassname">logger.</tt><tt class="descname">write_log</tt><big>(</big><em>line</em>, <em>task_line=None</em>, <em>debug=False</em><big>)</big><a class="reference internal" href="_modules/logger.html#write_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.write_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write log to stdout and log files.</p>
+<p>Highlight ansible run status in stdout.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-argparser"></span><div class="section" id="argparser">
+<h3>argparser<a class="headerlink" href="#argparser" title="Permalink to this headline">¶</a></h3>
+<p>Custom argparse actions and main argparse are
+defined here.</p>
+<dl class="class">
+<dt id="argparser.GetActiveBranchAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">GetActiveBranchAction</tt><big>(</big><em>option_strings</em>, <em>branch</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/argparser.html#GetActiveBranchAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.GetActiveBranchAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print active git brunch to stdout and exit.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="argparser.GetGitRepoAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">GetGitRepoAction</tt><big>(</big><em>option_strings</em>, <em>repo</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/argparser.html#GetGitRepoAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.GetGitRepoAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print active git repo to stdout and exit.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="argparser.GetGroupsAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">GetGroupsAction</tt><big>(</big><em>option_strings</em>, <em>inventory_script</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/argparser.html#GetGroupsAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.GetGroupsAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute inventory script and exit.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="argparser.GetPolicyVersionAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">GetPolicyVersionAction</tt><big>(</big><em>option_strings</em>, <em>uccm_dir</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/argparser.html#GetPolicyVersionAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.GetPolicyVersionAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print repo version file content and exit.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="argparser.GetStatusAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">GetStatusAction</tt><big>(</big><em>option_strings</em>, <em>logfile</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/argparser.html#GetStatusAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.GetStatusAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print ants status to stdout and exit.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="argparser.parse_args">
+<tt class="descclassname">argparser.</tt><tt class="descname">parse_args</tt><big>(</big><em>version</em>, <em>LOG_RECAP</em>, <em>DYNAMIC_INVENTORY</em>, <em>DESTINATION</em>, <em>CFG</em><big>)</big><a class="reference internal" href="_modules/argparser.html#parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse and return command line parameters.</p>
+<p>This function relies on the custom actions defined previousely.
+Custom actions will be called if the corresponding argument is
+entered on the command line.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-inventory"></span><div class="section" id="inventory">
+<h3>inventory<a class="headerlink" href="#inventory" title="Permalink to this headline">¶</a></h3>
+<p>Utility functions for inventory scripts.</p>
+<dl class="function">
+<dt id="inventory.format_output">
+<tt class="descclassname">inventory.</tt><tt class="descname">format_output</tt><big>(</big><em>output</em><big>)</big><a class="reference internal" href="_modules/inventory.html#format_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.format_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return results in Ansible JSON syntax.</p>
+<p>Ansible requirements are documented here:
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory.get_hostname">
+<tt class="descclassname">inventory.</tt><tt class="descname">get_hostname</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/inventory.html#get_hostname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.get_hostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return FQDN for this host in lower case.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory.get_simple_hostname">
+<tt class="descclassname">inventory.</tt><tt class="descname">get_simple_hostname</tt><big>(</big><em>fqdn</em><big>)</big><a class="reference internal" href="_modules/inventory.html#get_simple_hostname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.get_simple_hostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert FQDN and return simple host name.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory.read_cache">
+<tt class="descclassname">inventory.</tt><tt class="descname">read_cache</tt><big>(</big><em>cache_file</em><big>)</big><a class="reference internal" href="_modules/inventory.html#read_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.read_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read cache file and return content or False.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="inventory.write_cache">
+<tt class="descclassname">inventory.</tt><tt class="descname">write_cache</tt><big>(</big><em>cache_file</em>, <em>output</em><big>)</big><a class="reference internal" href="_modules/inventory.html#write_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.write_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format and write inventory cache to file.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to ants&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#ants"># ANTS</a><ul>
+<li><a class="reference internal" href="#id1">ants</a></li>
+<li><a class="reference internal" href="#inventory-default">inventory_default</a></li>
+<li><a class="reference internal" href="#inventory-ad">inventory_ad</a></li>
+<li><a class="reference internal" href="#configer">configer</a></li>
+<li><a class="reference internal" href="#logger">logger</a></li>
+<li><a class="reference internal" href="#argparser">argparser</a></li>
+<li><a class="reference internal" href="#inventory">inventory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">ANTS Framework 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2017, Balz Aschwanden, Jan Welker.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>logger &mdash; ANTS Framework 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="ANTS Framework 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ANTS Framework 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for logger</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;logger</span>
+<span class="sd">================</span>
+
+<span class="sd">Handle logging.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pwd</span>
+<span class="kn">import</span> <span class="nn">grp</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">logging.handlers</span>
+
+<span class="kn">from</span> <span class="nn">antslib</span> <span class="kn">import</span> <span class="n">configer</span>
+
+
+<span class="n">CFG</span> <span class="o">=</span> <span class="n">configer</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_logger"><a class="viewcode-back" href="../index.html#logger.get_logger">[docs]</a><span class="k">def</span> <span class="nf">get_logger</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">logfile</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">maxBytes</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="s">&#39;default&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return logging object with handler and formatter.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">logfile</span><span class="p">:</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">RotatingFileHandler</span><span class="p">(</span><span class="n">logfile</span><span class="p">,</span>
+                                                       <span class="n">maxBytes</span><span class="o">=</span><span class="n">maxBytes</span><span class="p">,</span>
+                                                       <span class="n">backupCount</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                                                       <span class="n">delay</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">formatter</span> <span class="ow">is</span> <span class="s">&#39;default&#39;</span><span class="p">:</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="se">\t</span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">,</span>
+                                               <span class="n">datefmt</span><span class="o">=</span><span class="s">&#39;%b </span><span class="si">%d</span><span class="s"> %Y %H:%M:%S %Z&#39;</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">formatter</span> <span class="ow">is</span> <span class="s">&#39;simple&#39;</span><span class="p">:</span>
+        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Formatter must be simple or default&#39;</span><span class="p">)</span>
+
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">logger</span>
+
+</div>
+<div class="viewcode-block" id="status_file_rollover"><a class="viewcode-back" href="../index.html#logger.status_file_rollover">[docs]</a><span class="k">def</span> <span class="nf">status_file_rollover</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Rotate log files for ok/changed/failed at the start of every ansible run</span>
+
+
+<span class="sd">    Keep track of ok/changed/failed and play recap</span>
+<span class="sd">    on a per run basis. Hence, rotate them at the start of each run.</span>
+
+<span class="sd">    Code for rotation based on</span>
+<span class="sd">    https://stackoverflow.com/questions/4654915/rotate-logfiles-each-time-the-application-is-started-python</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_DIR&#39;</span><span class="p">]):</span>
+        <span class="n">status_files</span> <span class="o">=</span> <span class="p">[[</span><span class="n">ok_logger</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_OK&#39;</span><span class="p">]],</span>
+                        <span class="p">[</span><span class="n">changed_logger</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_CHANGED&#39;</span><span class="p">]],</span>
+                        <span class="p">[</span><span class="n">failed_logger</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_FAILED&#39;</span><span class="p">]],</span>
+                        <span class="p">[</span><span class="n">recap_logger</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_RECAP&#39;</span><span class="p">]]]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="n">logfile</span><span class="p">)</span> <span class="ow">in</span> <span class="n">status_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">logfile</span><span class="p">):</span>
+                <span class="n">console_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Logfile rollover for file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">logfile</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">doRollover</span><span class="p">()</span>
+    <span class="k">return</span>
+
+</div>
+<div class="viewcode-block" id="log_recap"><a class="viewcode-back" href="../index.html#logger.log_recap">[docs]</a><span class="k">def</span> <span class="nf">log_recap</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">status_line</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Log play recap in a dedicated form.&quot;&quot;&quot;</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;****PLAY TIME****&#39;</span><span class="p">)</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Start time: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">start_time</span><span class="p">)</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;End time: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">end_time</span><span class="p">)</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Total: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;****PLAY RECAP****&#39;</span><span class="p">)</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">status_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="n">recap_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Client status: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">parse_client_status</span><span class="p">(</span><span class="n">status_line</span><span class="p">))</span>
+    <span class="k">return</span>
+
+</div>
+<div class="viewcode-block" id="parse_client_status"><a class="viewcode-back" href="../index.html#logger.parse_client_status">[docs]</a><span class="k">def</span> <span class="nf">parse_client_status</span><span class="p">(</span><span class="n">status_line</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read client status from recap log.</span>
+
+<span class="sd">    Status can have one of the following forms:</span>
+<span class="sd">    * ok</span>
+<span class="sd">    * changed</span>
+<span class="sd">    * failed</span>
+
+<span class="sd">    We expect IndexError because play recap will be</span>
+<span class="sd">    empty if no matching hosts were found.</span>
+<span class="sd">    Client status will be set to failed in that case.</span>
+
+<span class="sd">    Status will also be set to failed of no log file</span>
+<span class="sd">    could be found.&quot;&quot;&quot;</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="s">&#39;failed&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">status_list</span> <span class="o">=</span> <span class="n">status_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">status_list</span><span class="p">:</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;0&#39;</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">status</span>
+
+</div>
+<div class="viewcode-block" id="create_log_dir"><a class="viewcode-back" href="../index.html#logger.create_log_dir">[docs]</a><span class="k">def</span> <span class="nf">create_log_dir</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Create log directory.</span>
+
+<span class="sd">    Use pwd and grp to get uid/gid.</span>
+<span class="sd">    https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_DIR&#39;</span><span class="p">]):</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="s">&#39;root&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pw_uid</span>
+        <span class="n">gid</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">getgrnam</span><span class="p">(</span><span class="s">&#39;wheel&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">gr_gid</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_DIR&#39;</span><span class="p">],</span> <span class="mo">0755</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chown</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_DIR&#39;</span><span class="p">],</span> <span class="n">uid</span><span class="p">,</span> <span class="n">gid</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="write_log"><a class="viewcode-back" href="../index.html#logger.write_log">[docs]</a><span class="k">def</span> <span class="nf">write_log</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">task_line</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write log to stdout and log files.</span>
+
+
+<span class="sd">    Highlight ansible run status in stdout.&quot;&quot;&quot;</span>
+    <span class="n">create_log_dir</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;ok:&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">task_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ok_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">task_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="n">console_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;32m</span><span class="si">%s</span><span class="se">\033</span><span class="s">[0;0m&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="n">ok_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;changed:&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">task_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">changed_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">task_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="n">console_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;33m</span><span class="si">%s</span><span class="se">\033</span><span class="s">[0;0m&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="n">changed_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;failed:&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;fatal:&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">task_line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">failed_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">task_line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="n">console_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\033</span><span class="s">[0;31m</span><span class="si">%s</span><span class="se">\033</span><span class="s">[0;0m&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+        <span class="n">failed_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;skipping:&#39;</span><span class="p">):</span>
+        <span class="n">console_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\033</span><span class="s">[1;36m</span><span class="si">%s</span><span class="se">\033</span><span class="s">[0;0m&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">console_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="n">logfile_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+    <span class="k">return</span>
+
+</div>
+<span class="n">console_logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s">&quot;console_logger&quot;</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="s">&#39;simple&#39;</span><span class="p">)</span>
+<span class="n">logfile_logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s">&quot;logfile_logger&quot;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_MAIN&#39;</span><span class="p">],</span> <span class="mi">5000000</span><span class="p">)</span>
+<span class="n">ok_logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s">&quot;ok_logger&quot;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_OK&#39;</span><span class="p">])</span>
+<span class="n">changed_logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s">&quot;changed_logger&quot;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_CHANGED&#39;</span><span class="p">])</span>
+<span class="n">failed_logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s">&quot;failed_logger&quot;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_FAILED&#39;</span><span class="p">])</span>
+<span class="n">recap_logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s">&quot;recap_logger&quot;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_RECAP&#39;</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">ANTS Framework 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2017, Balz Aschwanden, Jan Welker.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

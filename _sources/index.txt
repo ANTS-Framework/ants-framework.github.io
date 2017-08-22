@@ -1,0 +1,42 @@
+.. ants documentation master file, created by
+   sphinx-quickstart on Sun Aug  6 21:24:14 2017.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to ants's documentation!
+================================
+
+.. toctree::
+   :maxdepth: 2
+
+.. include:: ../README.rst
+.. image:: ANTS_Client.svg
+   :align: center
+
+.. automodule:: ants
+   :members:
+
+.. automodule:: inventory_default
+   :members:
+
+.. automodule:: inventory_ad
+   :members:
+
+.. automodule:: configer
+   :members:
+
+.. automodule:: logger
+   :members:
+
+.. automodule:: argparser
+   :members:
+
+.. automodule:: inventory
+   :members:
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
