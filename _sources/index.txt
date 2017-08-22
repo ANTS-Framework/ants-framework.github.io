@@ -3,15 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to ants's documentation!
+Welcome to the ANTS Framework documentation!
 ================================
 
 .. toctree::
    :maxdepth: 2
 
 .. include:: ../README.rst
-.. image:: ANTS_Client.svg
-   :align: center
 
 .. automodule:: ants
    :members:
