@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to the ANTS Framework documentation!
-================================
+============================================
 
 .. toctree::
    :maxdepth: 2
@@ -12,7 +12,8 @@ Welcome to the ANTS Framework documentation!
 .. include:: ../README.rst
 
 Development Documentation
-================================
+=========================
+Please find the code documentation below
 
 .. automodule:: ants
    :members:

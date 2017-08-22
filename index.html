@@ -114,7 +114,7 @@ Configure ANTS to use that key.</p>
 You need an inventory source and a script that can read and return it in the
 <a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">correct format:</a></p>
 <p>By default, ANTS will run a dummy script that will just return your hostname and localhost belonging to a group
-named <strong>ants-common</strong>.</p>
+named <em>ants-common</em>.</p>
 <p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad.py</span></tt> which will connect to your Active Directory and return all groups your
 host is a member of. Just add your configuration to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
 <p>By using a dynamic inventory source, you can assign roles using AD and let ANTS handle the configuration.</p>
@@ -126,9 +126,10 @@ host is a member of. Just add your configuration to <tt class="docutils literal"
 <p>No additional infrastructure required.</p>
 </div>
 </div>
-<div class="section" id="module-ants">
-<span id="development-documentation"></span><h1>Development Documentation<a class="headerlink" href="#module-ants" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="ants">
+<div class="section" id="development-documentation">
+<h1>Development Documentation<a class="headerlink" href="#development-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Please find the code documentation below</p>
+<span class="target" id="module-ants"></span><div class="section" id="ants">
 <h2>ants<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
 <p>Run ansible-pull with a set of defined parameters
 and log the content of these runs.</p>
@@ -451,7 +452,7 @@ entered on the command line.</p>
 <li><a class="reference internal" href="#what-else-do-i-need">What else do I need</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-ants">Development Documentation</a><ul>
+<li><a class="reference internal" href="#development-documentation">Development Documentation</a><ul>
 <li><a class="reference internal" href="#ants">ants</a></li>
 <li><a class="reference internal" href="#inventory-default">inventory_default</a></li>
 <li><a class="reference internal" href="#inventory-ad">inventory_ad</a></li>
