@@ -63,8 +63,8 @@ It also adds logging and scheduling to controll your clients.</p>
 </div>
 <div class="section" id="requirements">
 <h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
-<p>This project assumes you are familiar with :: _ansible: <a class="reference external" href="https://www.ansible.com/">https://www.ansible.com/</a>
-and :: _git submodules: <a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">https://git-scm.com/book/en/v2/Git-Tools-Submodules</a></p>
+<p>This project assumes you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
+and <a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">Git submodules</a></p>
 </div>
 <div class="section" id="getting-started">
 <h3>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
@@ -94,7 +94,7 @@ will also look for a local configuration file at <tt class="docutils literal"><s
 <h4>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h4>
 <p>Fork our playbook and change the client configuration to point to your repo. Update local.yml to assign different roles to your clients.</p>
 <p>You can use default ansible syntax. You can use wildcard. Have a look at the
-:: _Ansible documentation: <a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">http://docs.ansible.com/ansible/latest/playbooks_intro.html</a></p>
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">Ansible documentation</a></p>
 </div>
 <div class="section" id="add-ssh-authentication-to-your-repo">
 <h4>Add ssh authentication to your repo<a class="headerlink" href="#add-ssh-authentication-to-your-repo" title="Permalink to this headline">¶</a></h4>
@@ -107,7 +107,7 @@ Use that key with ants.</p>
 <h4>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h4>
 <p>You can use any script to tell ansible-pull which tasks to run on which client.
 You need an inventory source and a script that can read and return it in the
-:: _correct format: <a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</a></p>
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">correct format:</a></p>
 <p>By default, ants will run a dummy script that will just return your hostname and localhost belonging to a group
 named <strong>ants-common</strong>.</p>
 <p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad.py</span></tt> which will connect to your AD and return any groups your
