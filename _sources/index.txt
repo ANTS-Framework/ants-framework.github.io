@@ -13,7 +13,7 @@ Welcome to the ANTS Framework documentation!
 
 Development Documentation
 =========================
-Please find the code documentation below
+Please find the source code documentation below. To contribute please file a Pull Request on `GitHub <https://github.com/ANTS-Framework>`_.
 
 .. automodule:: ants
    :members:
