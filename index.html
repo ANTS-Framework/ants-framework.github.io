@@ -66,6 +66,26 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 </ul>
 <div align="center" class="align-center"><img src="_images/ANTS_Client.svg" /></div>
 </div>
+<div class="section" id="comparison-of-plain-ansible-and-ansible-tower-to-ants">
+<h2>Comparison of plain Ansible and Ansible Tower to ANTS<a class="headerlink" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants" title="Permalink to this headline">¶</a></h2>
+<p>What does ANTS do, that Ansible can not?</p>
+<ul class="simple">
+<li><em>Short:</em> ANTS extends Ansible in Pull mode with some features only available in Ansible Tower</li>
+<li>ANTS gives you a set of ready to be used roles for typical macOS and Linux client configurations.</li>
+<li>ANTS let&#8217;s you utilize Active Directory to map computers to roles. With all its delegation and nesting features.</li>
+<li>ANTS was designed to be used on dynamic clients that roam networks or might be unreachable.</li>
+</ul>
+<p>What does Ansible or Ansible Tower do that ANTS does not?</p>
+<ul class="simple">
+<li>Tower has a nice Dashboard</li>
+<li>Tower has a real time job output and Push-Buttin job runs</li>
+<li>Tower can to job scheduling</li>
+<li>Tower supports run-time job promting</li>
+<li>Tower supports workflows</li>
+<li>Ansbile can use encrypted secrets using Vault</li>
+<li>Ansible and Tower do offer Enterprise Support</li>
+</ul>
+</div>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>This project assumes that you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
@@ -142,12 +162,6 @@ using Ansible. We recommend to keep the groups in a dedicated Organizational Uni
 <h2>ants<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
 <p>Run ansible-pull with a set of defined parameters
 and log the content of these runs.</p>
-<dl class="function">
-<dt id="ants.is_root">
-<tt class="descclassname">ants.</tt><tt class="descname">is_root</tt><big>(</big><big>)</big><a class="headerlink" href="#ants.is_root" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if user is root and return True or False.</p>
-</dd></dl>
-
 <dl class="function">
 <dt id="ants.parse_proc">
 <tt class="descclassname">ants.</tt><tt class="descname">parse_proc</tt><big>(</big><em>proc</em><big>)</big><a class="reference internal" href="_modules/ants.html#parse_proc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ants.parse_proc" title="Permalink to this definition">¶</a></dt>
@@ -284,25 +298,51 @@ to be bound to AD it just has to exist.</p>
 <h2>configer<a class="headerlink" href="#configer" title="Permalink to this headline">¶</a></h2>
 <p>Handle parsing of configuraiton file options.</p>
 <dl class="function">
+<dt id="configer.create_dir">
+<tt class="descclassname">configer.</tt><tt class="descname">create_dir</tt><big>(</big><em>dir_name</em>, <em>user='root'</em>, <em>group='wheel'</em><big>)</big><a class="headerlink" href="#configer.create_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create directory</p>
+<p>Use pwd and grp to get uid/gid.
+<a class="reference external" href="https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name">https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name</a></p>
+</dd></dl>
+
+<dl class="function">
 <dt id="configer.get_config">
-<tt class="descclassname">configer.</tt><tt class="descname">get_config</tt><big>(</big><em>config_section</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="reference internal" href="_modules/configer.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.get_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read indicated configuraiton section and return a dict.</p>
-<p>Use config.optionxform to preserver upper/lower case letters
+<tt class="descclassname">configer.</tt><tt class="descname">get_config</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/configer.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get configuration from command line and return ConfigParser opject</p>
+<p>If no value is specified by the user, the value marked as <em>example</em>
+will be written set.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="configer.get_values">
+<tt class="descclassname">configer.</tt><tt class="descname">get_values</tt><big>(</big><em>cfg</em><big>)</big><a class="headerlink" href="#configer.get_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take and return a dict of values and prompt the user for a reply.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="configer.is_root">
+<tt class="descclassname">configer.</tt><tt class="descname">is_root</tt><big>(</big><big>)</big><a class="headerlink" href="#configer.is_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if user is root and return True or False.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="configer.read_config">
+<tt class="descclassname">configer.</tt><tt class="descname">read_config</tt><big>(</big><em>config_section</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="headerlink" href="#configer.read_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read indicated configuraton section and return a dict.</p>
+<p>Uses config.optionxform to preserver upper/lower case letters
 in config file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="configer.write_config">
+<tt class="descclassname">configer.</tt><tt class="descname">write_config</tt><big>(</big><em>config</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="headerlink" href="#configer.write_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writing ConfigParser object to local configuration. Existing files will be overwritten.</p>
 </dd></dl>
 
 </div>
 <span class="target" id="module-logger"></span><div class="section" id="logger">
 <h2>logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h2>
 <p>Handle logging.</p>
-<dl class="function">
-<dt id="logger.create_log_dir">
-<tt class="descclassname">logger.</tt><tt class="descname">create_log_dir</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/logger.html#create_log_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.create_log_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create log directory.</p>
-<p>Use pwd and grp to get uid/gid.
-<a class="reference external" href="https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name">https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name</a></p>
-</dd></dl>
-
 <dl class="function">
 <dt id="logger.get_logger">
 <tt class="descclassname">logger.</tt><tt class="descname">get_logger</tt><big>(</big><em>name</em>, <em>logfile=False</em>, <em>maxBytes=0</em>, <em>formatter='default'</em><big>)</big><a class="reference internal" href="_modules/logger.html#get_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.get_logger" title="Permalink to this definition">¶</a></dt>
@@ -382,6 +422,12 @@ defined here.</p>
 <dd><p>Print ants status to stdout and exit.</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="argparser.InitializeAntsAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">InitializeAntsAction</tt><big>(</big><em>option_strings</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#argparser.InitializeAntsAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompt user for configuration input and write local config file.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="argparser.parse_args">
 <tt class="descclassname">argparser.</tt><tt class="descname">parse_args</tt><big>(</big><em>version</em>, <em>LOG_RECAP</em>, <em>DYNAMIC_INVENTORY</em>, <em>DESTINATION</em>, <em>CFG</em><big>)</big><a class="reference internal" href="_modules/argparser.html#parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.parse_args" title="Permalink to this definition">¶</a></dt>
@@ -448,6 +494,7 @@ entered on the command line.</p>
   <ul>
 <li><a class="reference internal" href="#">Welcome to the ANTS Framework</a><ul>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants">Comparison of plain Ansible and Ansible Tower to ANTS</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#getting-started">Getting started</a><ul>
 <li><a class="reference internal" href="#what-happened">What happened?</a></li>
