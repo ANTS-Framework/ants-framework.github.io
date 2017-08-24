@@ -54,7 +54,8 @@
 </div>
 <p>A framework to manage and apply macOS and Linux client configurations using Ansible Pull.</p>
 <p>The ANTS Framework is developed by the Client Services Team of the <a class="reference external" href="https://www.unibas.ch/">University of Basel</a> <a class="reference external" href="https://its.unibas.ch">IT Services</a>
-and released under the <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License Version 3</a>. <a class="reference external" href="https://docs.ansible.com/ansible/latest/index.html">Ansible</a> is a trademark of <a class="reference external" href="https://www.redhat.com">Red Hat, Inc.</a></p>
+and released under the <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License Version 3</a>.</p>
+<p><a class="reference external" href="https://docs.ansible.com/ansible/latest/index.html">Ansible</a> is a trademark of <a class="reference external" href="https://www.redhat.com">Red Hat, Inc.</a>.</p>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The ANTS Framework consists of the following components:</p>
@@ -68,8 +69,8 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <div class="section" id="communication">
 <h3>Communication<a class="headerlink" href="#communication" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Issues: Please use the <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/issues">GitHub issue tracker</a> to file issues.</li>
-<li>Contributions: Please use a <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/pulls">GitHub Pull-Request</a> to suggest changes.</li>
+<li>Please use the <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/issues">GitHub issue tracker</a> to file issues.</li>
+<li>Please use a <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/pulls">GitHub Pull-Request</a> to suggest changes.</li>
 </ul>
 </div>
 </div>
@@ -101,15 +102,15 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>Make sure GIT and Ansible are installed. If not installed, use your favourite package manager (e.g. pip or yum).</li>
-<li>Install the ANTS client, open the terminal and start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants</span></tt>.</li>
+<li>Install the ANTS client, open the terminal and start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants.py</span></tt>.</li>
 <li>Wait for ANTS to finish, then open another shell. You will see the message of the day.</li>
 </ol>
 <div class="section" id="what-happened">
 <h3>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h3>
 <p>Executing the installer will install the ANTS client with a default configuration
-to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>. It will also add github.com to your root users <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file and
-a launch daemon (macOS)/cron entry (Linux) to run ANTS at a random point in time within
-a defined interval (default is 15 minutes).</p>
+to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>.
+It will also add a launch daemon (macOS)/cron entry (Linux) to run ANTS at
+a random point in time within a defined interval (default is 15 minutes).</p>
 <p>Running ANTS with the default configuration will use ansible-pull to clone the ANTS playbook from git repository and execute an ansible run.</p>
 <p>By default, this will add a message of the day to your macOS or Linux client. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
 </div>
@@ -118,7 +119,7 @@ a defined interval (default is 15 minutes).</p>
 <h2>Where to go from here?<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="look-at-the-configuration">
 <h3>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h3>
-<p>Run <tt class="docutils literal"><span class="pre">ants</span> <span class="pre">-h</span></tt> to see all command line options or write your own configuration.</p>
+<p>Run <tt class="docutils literal"><span class="pre">ants.py</span> <span class="pre">-h</span></tt> to see all command line options or write your own configuration.</p>
 <p>The default configuration file is at <tt class="docutils literal"><span class="pre">/usr/local/ants/etc/ants.cfg</span></tt> but ANTS
 will also look for a local configuration file at <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
 <p>Do not modify the default configuration file as it might be overwritten when updating ANTS.</p>
@@ -135,6 +136,8 @@ will also look for a local configuration file at <tt class="docutils literal"><s
 Configure ANTS to use that key.</p>
 <p>By default, ANTS will look for a private key at <tt class="docutils literal"><span class="pre">/usr/local/ants/etc/id_ants</span></tt></p>
 <p>You can generate a key with <tt class="docutils literal"><span class="pre">ssh-keygen</span> <span class="pre">-t</span> <span class="pre">rsa</span> <span class="pre">-b</span> <span class="pre">4096</span> <span class="pre">-N</span> <span class="pre">''</span> <span class="pre">-C</span> <span class="pre">&quot;ants</span> <span class="pre">client&quot;</span> <span class="pre">-f</span> <span class="pre">/usr/local/ants/etc/id_ants</span></tt></p>
+<p>By default, ANTS runs with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
+You should change this in production.</p>
 </div>
 <div class="section" id="add-a-dynamic-inventory-source">
 <h3>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h3>
