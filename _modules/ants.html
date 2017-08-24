@@ -70,6 +70,7 @@
 
 
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 
@@ -78,11 +79,11 @@
 <span class="kn">from</span> <span class="nn">antslib</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">antslib</span> <span class="kn">import</span> <span class="n">configer</span>
 
-<span class="n">CFG</span> <span class="o">=</span> <span class="n">configer</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">)</span>
+<span class="n">CFG</span> <span class="o">=</span> <span class="n">configer</span><span class="o">.</span><span class="n">read_config</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">)</span>
 
 <span class="n">ANTS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
-<span class="n">DYNAMIC_INVENTORY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ANTS_PATH</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;HOSTS_FILE&#39;</span><span class="p">])</span>
-<span class="n">DESTINATION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;DESTINATION&#39;</span><span class="p">])</span>
+<span class="n">DYNAMIC_INVENTORY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ANTS_PATH</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;hosts_file&#39;</span><span class="p">])</span>
+<span class="n">DESTINATION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;destination&#39;</span><span class="p">])</span>
 
 
 <div class="viewcode-block" id="parse_proc"><a class="viewcode-back" href="../index.html#ants.parse_proc">[docs]</a><span class="k">def</span> <span class="nf">parse_proc</span><span class="p">(</span><span class="n">proc</span><span class="p">):</span>
@@ -128,14 +129,15 @@
 <span class="sd">    Documentation:</span>
 <span class="sd">    http://docs.ansible.com/ansible/dev_guide/developing_api.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ansible-pull&#39;</span><span class="p">,</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;/usr/local/bin/ansible-pull&#39;</span><span class="p">,</span>
            <span class="s">&#39;--clean&#39;</span><span class="p">,</span>
            <span class="s">&#39;-f&#39;</span><span class="p">,</span>
            <span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">inventory</span><span class="p">,</span>
            <span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">destination</span><span class="p">,</span>
            <span class="s">&#39;-U&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">git_repo</span><span class="p">,</span>
            <span class="s">&#39;-C&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">branch</span><span class="p">,</span>
-           <span class="s">&#39;-s&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">wait</span><span class="p">)]</span>
+           <span class="s">&#39;-e&#39;</span><span class="p">,</span> <span class="s">&#39;ants__roles_path=</span><span class="si">%s</span><span class="s">/roles&#39;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">destination</span><span class="p">,</span>
+           <span class="n">args</span><span class="o">.</span><span class="n">playbook</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ssh_key</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">console_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Found ssh key at </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">ssh_key</span><span class="p">)</span>
         <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;--private-key&#39;</span><span class="p">)</span>
@@ -145,6 +147,16 @@
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">console_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Running ansible-pull in verbose mode&quot;</span><span class="p">)</span>
         <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;-v&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">stricthostkeychecking</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">console_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s">&quot;Disable strict host key checking for ansible-pull.&quot;</span><span class="p">)</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;--accept-host-key&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">wait</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">console_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s">&quot;Running ansible-pull with a random wait intervall of </span><span class="si">%s</span><span class="s"> sec&quot;</span> <span class="o">%</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;wait_interval&#39;</span><span class="p">])</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;-s&#39;</span><span class="p">)</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;wait_interval&#39;</span><span class="p">])</span>
+
     <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">bufsize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                             <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
     <span class="n">parse_proc</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
@@ -152,10 +164,12 @@
 
 </div>
 <span class="k">def</span> <span class="nf">__main__</span><span class="p">():</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">__version__</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;LOG_RECAP&#39;</span><span class="p">],</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">__version__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;log_dir&#39;</span><span class="p">],</span> <span class="s">&#39;recap.log&#39;</span><span class="p">),</span>
                                 <span class="n">DYNAMIC_INVENTORY</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">,</span> <span class="n">CFG</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">console_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">configer</span><span class="o">.</span><span class="n">is_root</span><span class="p">():</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s">&#39;Script must be run as root&#39;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">status_file_rollover</span><span class="p">()</span>
     <span class="n">run_ansible</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 

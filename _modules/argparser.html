@@ -60,8 +60,26 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">antslib</span> <span class="kn">import</span> <span class="n">configer</span>
 
 
+<div class="viewcode-block" id="InitializeAntsAction"><a class="viewcode-back" href="../index.html#argparser.InitializeAntsAction">[docs]</a><span class="k">class</span> <span class="nc">InitializeAntsAction</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Action</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prompt user for configuration input and write local config file.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_strings</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InitializeAntsAction</span><span class="p">,</span>
+              <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">option_strings</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">configer</span><span class="o">.</span><span class="n">is_root</span><span class="p">():</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s">&#39;Script must be run as root&#39;</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">configer</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+        <span class="n">configer</span><span class="o">.</span><span class="n">write_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+</div>
 <div class="viewcode-block" id="GetStatusAction"><a class="viewcode-back" href="../index.html#argparser.GetStatusAction">[docs]</a><span class="k">class</span> <span class="nc">GetStatusAction</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Action</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print ants status to stdout and exit.&quot;&quot;&quot;</span>
 
@@ -147,6 +165,19 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
 
 </div>
+<div class="viewcode-block" id="str2bool"><a class="viewcode-back" href="../index.html#argparser.str2bool">[docs]</a><span class="k">def</span> <span class="nf">str2bool</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make argparse read strings and return bool values.</span>
+
+<span class="sd">    Source: https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;yes&#39;</span><span class="p">,</span> <span class="s">&#39;true&#39;</span><span class="p">,</span> <span class="s">&#39;t&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;1&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">elif</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;no&#39;</span><span class="p">,</span> <span class="s">&#39;false&#39;</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="s">&#39;n&#39;</span><span class="p">,</span> <span class="s">&#39;0&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span><span class="s">&#39;Boolean value expected.&#39;</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="parse_args"><a class="viewcode-back" href="../index.html#argparser.parse_args">[docs]</a><span class="k">def</span> <span class="nf">parse_args</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">LOG_RECAP</span><span class="p">,</span> <span class="n">DYNAMIC_INVENTORY</span><span class="p">,</span> <span class="n">DESTINATION</span><span class="p">,</span> <span class="n">CFG</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Parse and return command line parameters.</span>
 
@@ -170,32 +201,38 @@
                         <span class="n">inventory_script</span><span class="o">=</span><span class="n">DYNAMIC_INVENTORY</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-a&#39;</span><span class="p">,</span> <span class="s">&#39;--active_branch&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Print the active branch name and exit&#39;</span><span class="p">,</span>
-                        <span class="n">action</span><span class="o">=</span><span class="n">GetActiveBranchAction</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;BRANCH&#39;</span><span class="p">])</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">GetActiveBranchAction</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;branch&#39;</span><span class="p">])</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-p&#39;</span><span class="p">,</span> <span class="s">&#39;--policy_version&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Print policy version and exit&#39;</span><span class="p">,</span>
                         <span class="n">action</span><span class="o">=</span><span class="n">GetPolicyVersionAction</span><span class="p">,</span> <span class="n">uccm_dir</span><span class="o">=</span><span class="n">DESTINATION</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-r&#39;</span><span class="p">,</span> <span class="s">&#39;--repo&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Print the active git repo name and exit&#39;</span><span class="p">,</span>
-                        <span class="n">action</span><span class="o">=</span><span class="n">GetGitRepoAction</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;GIT_REPOSITORY&#39;</span><span class="p">])</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">GetGitRepoAction</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;git_repository&#39;</span><span class="p">])</span>
 
     <span class="c"># Action</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--initialize&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Write a local configuration for ants. Existing local configuration will be overwritten&#39;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">InitializeAntsAction</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-v&#39;</span><span class="p">,</span> <span class="s">&#39;--verbose&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Run ansible pull in verbose mode&#39;</span><span class="p">,</span>
                         <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;--inventory&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Add a custom inventory script or file&#39;</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="n">DYNAMIC_INVENTORY</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-w&#39;</span><span class="p">,</span> <span class="s">&#39;--wait&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Set random wait&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ants_path</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;hosts_file&#39;</span><span class="p">]))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-w&#39;</span><span class="p">,</span> <span class="s">&#39;--wait&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Wait a random interval before starting ansible-pull&#39;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="s">&#39;--destination&#39;</span><span class="p">,</span>
                         <span class="n">help</span><span class="o">=</span><span class="s">&#39;Set destionation for git checkout&#39;</span><span class="p">,</span>
                         <span class="n">default</span><span class="o">=</span><span class="n">DESTINATION</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-b&#39;</span><span class="p">,</span> <span class="s">&#39;--branch&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Set active branch&#39;</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;BRANCH&#39;</span><span class="p">])</span>
+                        <span class="n">default</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;branch&#39;</span><span class="p">])</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--git_repo&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Set git repository&#39;</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;GIT_REPOSITORY&#39;</span><span class="p">])</span>
+                        <span class="n">default</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;git_repository&#39;</span><span class="p">])</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--ssh_key&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Path to private key&#39;</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ants_path</span><span class="p">,</span> <span class="s">&#39;etc&#39;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;SSH_KEY&#39;</span><span class="p">]))</span>
+                        <span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ants_path</span><span class="p">,</span> <span class="s">&#39;etc&#39;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">[</span><span class="s">&#39;ssh_key&#39;</span><span class="p">]))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--playbook&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Path to playbook file&#39;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;ansible_playbook&#39;</span><span class="p">])</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--stricthostkeychecking&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Enable/Disable strict host key checking for ssh.&#39;</span><span class="p">,</span>
+                        <span class="nb">type</span><span class="o">=</span><span class="n">str2bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">CFG</span><span class="p">[</span><span class="s">&#39;ssh_stricthostkeychecking&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
 </div>

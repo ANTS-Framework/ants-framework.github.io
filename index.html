@@ -52,7 +52,7 @@
 <ul class="simple">
 </ul>
 </div>
-<p>A framework to manage and apply macOS and Linux client configurations using ansible-pull.</p>
+<p>A framework to manage and apply macOS and Linux client configurations using Ansible Pull.</p>
 <p>The ANTS Framework is developed by the Client Services Team of the <a class="reference external" href="https://www.unibas.ch/">University of Basel</a> <a class="reference external" href="https://its.unibas.ch">IT Services</a>
 and released under the <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License Version 3</a>. <a class="reference external" href="https://docs.ansible.com/ansible/latest/index.html">Ansible</a> is a trademark of <a class="reference external" href="https://www.redhat.com">Red Hat, Inc.</a></p>
 <div class="section" id="introduction">
@@ -64,7 +64,14 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <li>A modular collection of roles ready to be used</li>
 <li>Strong logging integration</li>
 </ul>
-<div align="center" class="align-center"><img src="_images/ANTS_Client.svg" /></div>
+<div align="center" class="align-center"><img src="ANTS_Client.svg" /></div>
+<div class="section" id="communication">
+<h3>Communication<a class="headerlink" href="#communication" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Issues: Please use the <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/issues">GitHub issue tracker</a> to file issues.</li>
+<li>Contributions: Please use a <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/pulls">GitHub Pull-Request</a> to suggest changes.</li>
+</ul>
+</div>
 </div>
 <div class="section" id="comparison-of-plain-ansible-and-ansible-tower-to-ants">
 <h2>Comparison of plain Ansible and Ansible Tower to ANTS<a class="headerlink" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants" title="Permalink to this headline">¶</a></h2>
@@ -72,14 +79,14 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <ul class="simple">
 <li>ANTS gives you a set of ready to be used roles for typical macOS and Linux client configurations.</li>
 <li>ANTS let&#8217;s you utilize Active Directory to map computers to roles. With all its delegation and nesting features.</li>
-<li>ANTS was designed to be used on dynamic clients that roam networks or might be unreachable at times.</li>
+<li>ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the client is offline.</li>
 </ul>
 <p>What does Ansible or Ansible Tower do that ANTS does not?</p>
 <ul class="simple">
 <li>Tower has a nice Dashboard</li>
-<li>Tower has a real time job output and Push-Buttin job runs</li>
+<li>Tower has a real time job output and push-button job runs</li>
 <li>Tower can to job scheduling</li>
-<li>Tower supports run-time job promting</li>
+<li>Tower supports run-time job promoting</li>
 <li>Tower supports workflows</li>
 <li>Ansbile can use encrypted secrets using Vault</li>
 <li>Ansible and Tower do offer Enterprise Support</li>
@@ -93,7 +100,7 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <div class="section" id="getting-started">
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>Make sure GIT and Ansible are installed. If not install it via your favourite package manage (e.g. pip or yum).</li>
+<li>Make sure GIT and Ansible are installed. If not installed, use your favourite package manager (e.g. pip or yum).</li>
 <li>Install the ANTS client, open the terminal and start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants</span></tt>.</li>
 <li>Wait for ANTS to finish, then open another shell. You will see the message of the day.</li>
 </ol>
@@ -102,8 +109,8 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <p>Executing the installer will install the ANTS client with a default configuration
 to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>. It will also add github.com to your root users <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file and
 a launch daemon (macOS)/cron entry (Linux) to run ANTS at a random point in time within
-a defined interval. (The default is 15 minutes.)</p>
-<p>Running ANTS with the default configuration will use ansible-pull to git clone the ANTS playbook repository and execute an ansible run.</p>
+a defined interval (default is 15 minutes).</p>
+<p>Running ANTS with the default configuration will use ansible-pull to clone the ANTS playbook from git repository and execute an ansible run.</p>
 <p>By default, this will add a message of the day to your macOS or Linux client. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
 </div>
 </div>
@@ -118,7 +125,7 @@ will also look for a local configuration file at <tt class="docutils literal"><s
 </div>
 <div class="section" id="run-other-roles">
 <h3>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h3>
-<p>Fork our playbook and change the client configuration to point to your repository. Update local.yml to assign different roles to your clients.</p>
+<p>Fork our playbook and change the client configuration to point to your repository. Update <tt class="docutils literal"><span class="pre">local.yml</span></tt> to assign different roles to your clients.</p>
 <p>You can use the default Ansible syntax. You can also use wildcards. Have a look at the
 <a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">Ansible documentation</a></p>
 </div>
@@ -143,7 +150,7 @@ Active Directory user are sufficient.</p>
 <div class="section" id="group-layout-in-active-directory">
 <h4>Group Layout in Active Directory<a class="headerlink" href="#group-layout-in-active-directory" title="Permalink to this headline">¶</a></h4>
 <p>The groups in Active Directory must have the same names as the mappings and the variables you want to assign
-using Ansible. We recommend to keep the groups in a dedicated Organizational Unit to naming naming collisions.</p>
+using Ansible. We recommend to keep the groups in a dedicated Organizational Unit to prevent naming collisions.</p>
 <p>Nested groups with access restrictions are an easy way to offer rights delegation to other units in your organization.</p>
 </div>
 </div>
@@ -298,7 +305,7 @@ to be bound to AD it just has to exist.</p>
 <p>Handle parsing of configuraiton file options.</p>
 <dl class="function">
 <dt id="configer.create_dir">
-<tt class="descclassname">configer.</tt><tt class="descname">create_dir</tt><big>(</big><em>dir_name</em>, <em>user='root'</em>, <em>group='wheel'</em><big>)</big><a class="headerlink" href="#configer.create_dir" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">configer.</tt><tt class="descname">create_dir</tt><big>(</big><em>dir_name</em>, <em>user='root'</em>, <em>group='wheel'</em><big>)</big><a class="reference internal" href="_modules/configer.html#create_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.create_dir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create directory</p>
 <p>Use pwd and grp to get uid/gid.
 <a class="reference external" href="https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name">https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name</a></p>
@@ -310,23 +317,25 @@ to be bound to AD it just has to exist.</p>
 <dd><p>Get configuration from command line and return ConfigParser opject</p>
 <p>If no value is specified by the user, the value marked as <em>example</em>
 will be written set.</p>
+<p>Only values that differ from the system defaults are written to
+the local config file.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="configer.get_values">
-<tt class="descclassname">configer.</tt><tt class="descname">get_values</tt><big>(</big><em>cfg</em><big>)</big><a class="headerlink" href="#configer.get_values" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">configer.</tt><tt class="descname">get_values</tt><big>(</big><em>cfg</em><big>)</big><a class="reference internal" href="_modules/configer.html#get_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.get_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take and return a dict of values and prompt the user for a reply.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="configer.is_root">
-<tt class="descclassname">configer.</tt><tt class="descname">is_root</tt><big>(</big><big>)</big><a class="headerlink" href="#configer.is_root" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">configer.</tt><tt class="descname">is_root</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/configer.html#is_root"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.is_root" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if user is root and return True or False.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="configer.read_config">
-<tt class="descclassname">configer.</tt><tt class="descname">read_config</tt><big>(</big><em>config_section</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="headerlink" href="#configer.read_config" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">configer.</tt><tt class="descname">read_config</tt><big>(</big><em>config_section</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="reference internal" href="_modules/configer.html#read_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.read_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read indicated configuraton section and return a dict.</p>
 <p>Uses config.optionxform to preserver upper/lower case letters
 in config file.</p>
@@ -334,7 +343,7 @@ in config file.</p>
 
 <dl class="function">
 <dt id="configer.write_config">
-<tt class="descclassname">configer.</tt><tt class="descname">write_config</tt><big>(</big><em>config</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="headerlink" href="#configer.write_config" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">configer.</tt><tt class="descname">write_config</tt><big>(</big><em>config</em>, <em>config_file='ants.cfg'</em><big>)</big><a class="reference internal" href="_modules/configer.html#write_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.write_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writing ConfigParser object to local configuration. Existing files will be overwritten.</p>
 </dd></dl>
 
@@ -423,7 +432,7 @@ defined here.</p>
 
 <dl class="class">
 <dt id="argparser.InitializeAntsAction">
-<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">InitializeAntsAction</tt><big>(</big><em>option_strings</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#argparser.InitializeAntsAction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">InitializeAntsAction</tt><big>(</big><em>option_strings</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/argparser.html#InitializeAntsAction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.InitializeAntsAction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prompt user for configuration input and write local config file.</p>
 </dd></dl>
 
@@ -434,6 +443,13 @@ defined here.</p>
 <p>This function relies on the custom actions defined previousely.
 Custom actions will be called if the corresponding argument is
 entered on the command line.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="argparser.str2bool">
+<tt class="descclassname">argparser.</tt><tt class="descname">str2bool</tt><big>(</big><em>v</em><big>)</big><a class="reference internal" href="_modules/argparser.html#str2bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.str2bool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make argparse read strings and return bool values.</p>
+<p>Source: <a class="reference external" href="https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse">https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse</a></p>
 </dd></dl>
 
 </div>
@@ -492,7 +508,10 @@ entered on the command line.</p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to the ANTS Framework</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#communication">Communication</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants">Comparison of plain Ansible and Ansible Tower to ANTS</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#getting-started">Getting started</a><ul>

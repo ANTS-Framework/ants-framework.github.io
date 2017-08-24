@@ -9,7 +9,7 @@ Welcome to the ANTS Framework
 .. toctree::
    :maxdepth: 2
 
-.. include:: ../README.rst
+.. include:: ../ants/README.rst
 
 Development Documentation
 =========================

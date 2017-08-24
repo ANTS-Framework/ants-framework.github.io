@@ -58,12 +58,33 @@
 
 <span class="kn">import</span> <span class="nn">ConfigParser</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pwd</span>
+<span class="kn">import</span> <span class="nn">grp</span>
 
 
-<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../index.html#configer.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">config_section</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="s">&#39;ants.cfg&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read indicated configuraiton section and return a dict.</span>
+<div class="viewcode-block" id="is_root"><a class="viewcode-back" href="../index.html#configer.is_root">[docs]</a><span class="k">def</span> <span class="nf">is_root</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Check if user is root and return True or False.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
 
-<span class="sd">    Use config.optionxform to preserver upper/lower case letters</span>
+</div>
+<div class="viewcode-block" id="create_dir"><a class="viewcode-back" href="../index.html#configer.create_dir">[docs]</a><span class="k">def</span> <span class="nf">create_dir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s">&#39;root&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s">&#39;wheel&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create directory</span>
+
+<span class="sd">    Use pwd and grp to get uid/gid.</span>
+<span class="sd">    https://stackoverflow.com/questions/5994840/how-to-change-the-user-and-group-permissions-for-a-directory-by-name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span><span class="n">user</span><span class="p">)</span><span class="o">.</span><span class="n">pw_uid</span>
+    <span class="n">gid</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">getgrnam</span><span class="p">(</span><span class="n">group</span><span class="p">)</span><span class="o">.</span><span class="n">gr_gid</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="mo">0755</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chown</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">gid</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="read_config"><a class="viewcode-back" href="../index.html#configer.read_config">[docs]</a><span class="k">def</span> <span class="nf">read_config</span><span class="p">(</span><span class="n">config_section</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="s">&#39;ants.cfg&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read indicated configuraton section and return a dict.</span>
+
+<span class="sd">    Uses config.optionxform to preserver upper/lower case letters</span>
 <span class="sd">    in config file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -77,9 +98,48 @@
 
     <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
     <span class="n">config</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="nb">str</span>
-    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">([</span><span class="n">system_config</span><span class="p">,</span> <span class="n">default_config</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">([</span><span class="n">default_config</span><span class="p">,</span> <span class="n">system_config</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">config_section</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="get_values"><a class="viewcode-back" href="../index.html#configer.get_values">[docs]</a><span class="k">def</span> <span class="nf">get_values</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Take and return a dict of values and prompt the user for a reply.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">cfg</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> [Example: </span><span class="si">%s</span><span class="s">]:&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span> <span class="ow">or</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">cfg</span>
+
+</div>
+<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../index.html#configer.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Get configuration from command line and return ConfigParser opject</span>
+
+<span class="sd">    If no value is specified by the user, the value marked as *example*</span>
+<span class="sd">    will be written set.</span>
+
+<span class="sd">    Only values that differ from the system defaults are written to</span>
+<span class="sd">    the local config file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cfg_main</span> <span class="o">=</span> <span class="n">get_values</span><span class="p">(</span><span class="n">read_config</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">))</span>
+    <span class="n">cfg_ad</span> <span class="o">=</span> <span class="n">get_values</span><span class="p">(</span><span class="n">read_config</span><span class="p">(</span><span class="s">&#39;ad&#39;</span><span class="p">))</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cfg_main</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;main&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">add_section</span><span class="p">(</span><span class="s">&#39;ad&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cfg_ad</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;ad&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config</span>
+
+</div>
+<div class="viewcode-block" id="write_config"><a class="viewcode-back" href="../index.html#configer.write_config">[docs]</a><span class="k">def</span> <span class="nf">write_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="s">&#39;ants.cfg&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Writing ConfigParser object to local configuration. Existing files will be overwritten.&quot;&quot;&quot;</span>
+    <span class="n">config_path</span> <span class="o">=</span> <span class="s">&#39;/etc/ants/&#39;</span>
+    <span class="n">system_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="n">config_file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+        <span class="n">create_dir</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">system_config</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cfg</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
