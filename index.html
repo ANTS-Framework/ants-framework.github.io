@@ -52,12 +52,14 @@
 <ul class="simple">
 </ul>
 </div>
-<p>A framework to manage and apply macOS and Linux client configurations using Ansible Pull.</p>
+<div class="section" id="ants-framework">
+<h2>ANTS Framework<a class="headerlink" href="#ants-framework" title="Permalink to this headline">¶</a></h2>
+<p>ANTS is a framework to manage and apply macOS and Linux host configurations using Ansible Pull.</p>
 <p>The ANTS Framework is developed by the Client Services Team of the <a class="reference external" href="https://www.unibas.ch/">University of Basel</a> <a class="reference external" href="https://its.unibas.ch">IT Services</a>
 and released under the <a class="reference external" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License Version 3</a>.</p>
 <p><a class="reference external" href="https://docs.ansible.com/ansible/latest/index.html">Ansible</a> is a trademark of <a class="reference external" href="https://www.redhat.com">Red Hat, Inc.</a>.</p>
 <div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
 <p>The ANTS Framework consists of the following components:</p>
 <ul class="simple">
 <li>A wrapper for Ansible-Pull</li>
@@ -65,24 +67,116 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <li>A modular collection of roles ready to be used</li>
 <li>Strong logging integration</li>
 </ul>
-<div align="center" class="align-center"><img src="_images/ANTS_Client.svg" /></div>
+</div>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
+<p>This project assumes that you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
+, <a class="reference external" href="https://git-scm.com/book/en/v2">Git</a> and the shell.</p>
+</div>
+<div class="section" id="getting-started">
+<h3>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="installing-ants-using-pip">
+<h4>Installing ants using pip<a class="headerlink" href="#installing-ants-using-pip" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Make sure <tt class="docutils literal"><span class="pre">Git</span></tt> is installed on your machine</li>
+<li>Install the latest ants client using pip: <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">ants_client</span></tt></li>
+<li>Pip will install the ANTS client with a default configuration and put the executable in your path.</li>
+</ul>
+</div>
+<div class="section" id="installing-ants-using-macos-pkg-installer">
+<h4>Installing ants using macOS .pkg installer<a class="headerlink" href="#installing-ants-using-macos-pkg-installer" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Download the latest .pkg installer from the <a class="reference external" href="https://github.com/ANTS-Framework/ants/releases/latest">releases page</a></li>
+<li>Execute the installer. This will take care of all dependencies</li>
+<li>A launch daemon will be installed, running <cite>ants</cite> every 15 minutes. It will trigger after the next restart.</li>
+</ul>
+</div>
+<div class="section" id="run-ants">
+<h4>Run ants<a class="headerlink" href="#run-ants" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Open your terminal</li>
+<li>Start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants</span></tt>.</li>
+<li>Wait for ANTS to finish, then open another shell. You will see the message of the day.</li>
+</ul>
+</div>
+<div class="section" id="what-happened">
+<h4>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h4>
+<p>Running ANTS with the default configuration will use ansible-pull to clone
+<a class="reference external" href="https://github.com/ANTS-Framework/playbook">the ANTS playbook</a> from a github repository and execute an ansible run.</p>
+<p>By default, this will add a message of the day to your macOS or Linux host. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="where-to-go-from-here">
+<h3>Where to go from here?<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="look-at-the-configuration">
+<h3>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Run <tt class="docutils literal"><span class="pre">ants</span> <span class="pre">-h</span></tt> to see all command line options or write your own configuration.</p>
+<p>Besides the default configuration file in the ants_client package, ANTS
+will also look for a local configuration file at <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
+<p>Do not modify the default configuration file as it might be overwritten when updating ANTS.</p>
+</div>
+<div class="section" id="run-other-roles">
+<h3>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h3>
+<p>Fork or duplicate <a class="reference external" href="https://github.com/ANTS-Framework/playbook">our example playbook</a>
+and change the client configuration to point to your repository.
+Update <tt class="docutils literal"><span class="pre">main.yml</span></tt> to assign different roles to your hosts.</p>
+<p>You can use the default Ansible syntax. You can also use wildcards. Have a look at the
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">Ansible documentation</a></p>
+</div>
+<div class="section" id="add-ssh-authentication-to-your-repository">
+<h3>Add ssh authentication to your repository<a class="headerlink" href="#add-ssh-authentication-to-your-repository" title="Permalink to this headline">¶</a></h3>
+<p>Ansible-pull cat clone a git repository using ssh. You can enable this by creating your own private playbook,
+adding ssh authentication and a read only ssh key to the repository.
+Configure ANTS to use that key.</p>
+<p>By default, ANTS will look for a private key at <tt class="docutils literal"><span class="pre">/etc/ants/id_ants</span></tt></p>
+<p>You can generate a key with <tt class="docutils literal"><span class="pre">ssh-keygen</span> <span class="pre">-t</span> <span class="pre">rsa</span> <span class="pre">-b</span> <span class="pre">4096</span> <span class="pre">-N</span> <span class="pre">''</span> <span class="pre">-C</span> <span class="pre">&quot;ants</span> <span class="pre">client&quot;</span> <span class="pre">-f</span> <span class="pre">/etc/ants/id_ants</span></tt></p>
+<p>By default, ANTS is configured to run with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
+You should change this in production. To do so, add <tt class="docutils literal"><span class="pre">ssh_stricthostkeychecking</span> <span class="pre">=</span> <span class="pre">True</span></tt> to your ants.cfg</p>
+</div>
+<div class="section" id="add-a-dynamic-inventory-source">
+<h3>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h3>
+<p>Ansible supports dynamic inventory scripts. (A json representation of hosts to group mappings.)</p>
+<p>You can use scripts to tell ansible-pull which tasks to run on which host.
+You need an inventory source and a script that can read and return it in the
+<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">correct format:</a></p>
+<p>By default, ANTS will run a dummy script <tt class="docutils literal"><span class="pre">inventory_default</span></tt> that will just return your hostname belonging to a group
+named <em>ants-common</em>.</p>
+<p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad</span></tt> which will connect to your Active Directory and return all groups your
+host is a member of. Just add your configuration to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>. Note that read only rights for the
+Active Directory user are sufficient.</p>
+<p>By using a dynamic inventory source, you can assign roles to a host using AD and let ANTS handle the configuration.</p>
+</div>
+<div class="section" id="group-layout-in-active-directory">
+<h3>Group Layout in Active Directory<a class="headerlink" href="#group-layout-in-active-directory" title="Permalink to this headline">¶</a></h3>
+<p>The groups in Active Directory must have the same names as the mappings and the variables you want to assign
+using Ansible. We recommend to keep the groups in a dedicated Organizational Unit to prevent naming collisions.</p>
+<p>Nested groups with access restrictions are an easy way to offer rights delegation to other units in your organization.</p>
+</div>
+<div class="section" id="what-else-do-i-need">
+<h3>What else do I need<a class="headerlink" href="#what-else-do-i-need" title="Permalink to this headline">¶</a></h3>
+<p>Nothing. You just set up a configuration management that communicates savely over ssh using your AD and Github.</p>
+<p>No additional infrastructure required.</p>
+</div>
 <div class="section" id="communication">
 <h3>Communication<a class="headerlink" href="#communication" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li>Please use the <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/issues">GitHub issue tracker</a> to file issues.</li>
-<li>Please use a <a class="reference external" href="https://github.com/ANTS-Framework/ants-framework.github.io/pulls">GitHub Pull-Request</a> to suggest changes.</li>
+<li>Please use the <a class="reference external" href="https://github.com/ANTS-Framework/ants/issues">GitHub issue tracker</a> to file issues.</li>
+<li>Please use a <a class="reference external" href="https://github.com/ANTS-Framework/ants/pulls">GitHub Pull-Request</a> to suggest changes.</li>
 </ul>
-</div>
 </div>
 <div class="section" id="comparison-of-plain-ansible-and-ansible-tower-to-ants">
-<h2>Comparison of plain Ansible and Ansible Tower to ANTS<a class="headerlink" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants" title="Permalink to this headline">¶</a></h2>
-<p>What does ANTS do, that Ansible can not?</p>
+<h3>Comparison of plain Ansible and Ansible Tower to ANTS<a class="headerlink" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="what-does-ants-do-that-ansible-can-not">
+<h4>What does ANTS do, that Ansible can not?<a class="headerlink" href="#what-does-ants-do-that-ansible-can-not" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li>ANTS gives you a set of ready to be used roles for typical macOS and Linux client configurations.</li>
-<li>ANTS let&#8217;s you utilize Active Directory to map computers to roles. With all its delegation and nesting features.</li>
-<li>ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the client is offline.</li>
+<li>ANTS gives you a set of ready to be used roles for typical macOS and Linux host configurations.</li>
+<li>ANTS let&#8217;s you utilize Active Directory to map computers to roles. With all it&#8217;s delegation and nesting features.</li>
+<li>ANTS utilizes Ansible Pull and therefore does not require an active network connection to a central server. Roles will be locally applied even if the host is offline.</li>
 </ul>
-<p>What does Ansible or Ansible Tower do that ANTS does not?</p>
+</div>
+<div class="section" id="what-does-ansible-or-ansible-tower-do-that-ants-does-not">
+<h4>What does Ansible or Ansible Tower do that ANTS does not?<a class="headerlink" href="#what-does-ansible-or-ansible-tower-do-that-ants-does-not" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>Tower has a nice Dashboard</li>
 <li>Tower has a real time job output and push-button job runs</li>
@@ -93,75 +187,7 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <li>Ansible and Tower do offer Enterprise Support</li>
 </ul>
 </div>
-<div class="section" id="requirements">
-<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
-<p>This project assumes that you are familiar with <a class="reference external" href="https://www.ansible.com/">Ansible</a>
-, <a class="reference external" href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">Git Submodules</a> and the shell.</p>
 </div>
-<div class="section" id="getting-started">
-<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
-<ol class="arabic simple">
-<li>Make sure GIT and Ansible are installed. If not installed, use your favourite package manager (e.g. pip or yum).</li>
-<li>Install the ANTS client, open the terminal and start an ANTS run by typing <tt class="docutils literal"><span class="pre">ants.py</span></tt>.</li>
-<li>Wait for ANTS to finish, then open another shell. You will see the message of the day.</li>
-</ol>
-<div class="section" id="what-happened">
-<h3>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h3>
-<p>Executing the installer will install the ANTS client with a default configuration
-to <tt class="docutils literal"><span class="pre">/usr/local/ants</span></tt>.
-It will also add a launch daemon (macOS)/cron entry (Linux) to run ANTS at
-a random point in time within a defined interval (default is 15 minutes).</p>
-<p>Running ANTS with the default configuration will use ansible-pull to clone the ANTS playbook from git repository and execute an ansible run.</p>
-<p>By default, this will add a message of the day to your macOS or Linux client. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
-</div>
-</div>
-<div class="section" id="where-to-go-from-here">
-<h2>Where to go from here?<a class="headerlink" href="#where-to-go-from-here" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="look-at-the-configuration">
-<h3>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h3>
-<p>Run <tt class="docutils literal"><span class="pre">ants.py</span> <span class="pre">-h</span></tt> to see all command line options or write your own configuration.</p>
-<p>The default configuration file is at <tt class="docutils literal"><span class="pre">/usr/local/ants/etc/ants.cfg</span></tt> but ANTS
-will also look for a local configuration file at <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
-<p>Do not modify the default configuration file as it might be overwritten when updating ANTS.</p>
-</div>
-<div class="section" id="run-other-roles">
-<h3>Run other roles<a class="headerlink" href="#run-other-roles" title="Permalink to this headline">¶</a></h3>
-<p>Fork our playbook and change the client configuration to point to your repository. Update <tt class="docutils literal"><span class="pre">local.yml</span></tt> to assign different roles to your clients.</p>
-<p>You can use the default Ansible syntax. You can also use wildcards. Have a look at the
-<a class="reference external" href="http://docs.ansible.com/ansible/latest/playbooks_intro.html">Ansible documentation</a></p>
-</div>
-<div class="section" id="add-ssh-authentication-to-your-repo">
-<h3>Add ssh authentication to your repo<a class="headerlink" href="#add-ssh-authentication-to-your-repo" title="Permalink to this headline">¶</a></h3>
-<p>Create your own private playbook, add a ssh authentication and a read only ssh key to it.
-Configure ANTS to use that key.</p>
-<p>By default, ANTS will look for a private key at <tt class="docutils literal"><span class="pre">/usr/local/ants/etc/id_ants</span></tt></p>
-<p>You can generate a key with <tt class="docutils literal"><span class="pre">ssh-keygen</span> <span class="pre">-t</span> <span class="pre">rsa</span> <span class="pre">-b</span> <span class="pre">4096</span> <span class="pre">-N</span> <span class="pre">''</span> <span class="pre">-C</span> <span class="pre">&quot;ants</span> <span class="pre">client&quot;</span> <span class="pre">-f</span> <span class="pre">/usr/local/ants/etc/id_ants</span></tt></p>
-<p>By default, ANTS runs with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
-You should change this in production.</p>
-</div>
-<div class="section" id="add-a-dynamic-inventory-source">
-<h3>Add a dynamic inventory source<a class="headerlink" href="#add-a-dynamic-inventory-source" title="Permalink to this headline">¶</a></h3>
-<p>You can use scripts to tell ansible-pull which tasks to run on which client.
-You need an inventory source and a script that can read and return it in the
-<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">correct format:</a></p>
-<p>By default, ANTS will run a dummy script that will just return your hostname and localhost belonging to a group
-named <em>ants-common</em>.</p>
-<p>But we also provide <tt class="docutils literal"><span class="pre">inventory_ad.py</span></tt> which will connect to your Active Directory and return all groups your
-host is a member of. Just add your configuration to <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>. Note that read only rights for the
-Active Directory user are sufficient.</p>
-<p>By using a dynamic inventory source, you can assign roles using AD and let ANTS handle the configuration.</p>
-<div class="section" id="group-layout-in-active-directory">
-<h4>Group Layout in Active Directory<a class="headerlink" href="#group-layout-in-active-directory" title="Permalink to this headline">¶</a></h4>
-<p>The groups in Active Directory must have the same names as the mappings and the variables you want to assign
-using Ansible. We recommend to keep the groups in a dedicated Organizational Unit to prevent naming collisions.</p>
-<p>Nested groups with access restrictions are an easy way to offer rights delegation to other units in your organization.</p>
-</div>
-</div>
-</div>
-<div class="section" id="what-else-do-i-need">
-<h2>What else do I need<a class="headerlink" href="#what-else-do-i-need" title="Permalink to this headline">¶</a></h2>
-<p>Nothing. You just set up a configuration management using your AD and Github.</p>
-<p>No additional infrastructure required.</p>
 </div>
 </div>
 <div class="section" id="development-documentation">
@@ -171,6 +197,12 @@ using Ansible. We recommend to keep the groups in a dedicated Organizational Uni
 <h2>ants<a class="headerlink" href="#ants" title="Permalink to this headline">¶</a></h2>
 <p>Run ansible-pull with a set of defined parameters
 and log the content of these runs.</p>
+<dl class="function">
+<dt id="ants.find_file">
+<tt class="descclassname">ants.</tt><tt class="descname">find_file</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#ants.find_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a file in environment PATH and return first match or None</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="ants.parse_proc">
 <tt class="descclassname">ants.</tt><tt class="descname">parse_proc</tt><big>(</big><em>proc</em><big>)</big><a class="reference internal" href="_modules/ants.html#parse_proc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ants.parse_proc" title="Permalink to this definition">¶</a></dt>
@@ -326,7 +358,7 @@ the local config file.</p>
 
 <dl class="function">
 <dt id="configer.get_values">
-<tt class="descclassname">configer.</tt><tt class="descname">get_values</tt><big>(</big><em>cfg</em><big>)</big><a class="reference internal" href="_modules/configer.html#get_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.get_values" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">configer.</tt><tt class="descname">get_values</tt><big>(</big><em>cfg</em>, <em>section_name</em><big>)</big><a class="reference internal" href="_modules/configer.html#get_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configer.get_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take and return a dict of values and prompt the user for a reply.</p>
 </dd></dl>
 
@@ -439,9 +471,15 @@ defined here.</p>
 <dd><p>Prompt user for configuration input and write local config file.</p>
 </dd></dl>
 
+<dl class="class">
+<dt id="argparser.ShowConfigAction">
+<em class="property">class </em><tt class="descclassname">argparser.</tt><tt class="descname">ShowConfigAction</tt><big>(</big><em>option_strings</em>, <em>dest</em>, <em>nargs=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#argparser.ShowConfigAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print ants configuration to stdout and exit.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="argparser.parse_args">
-<tt class="descclassname">argparser.</tt><tt class="descname">parse_args</tt><big>(</big><em>version</em>, <em>LOG_RECAP</em>, <em>DYNAMIC_INVENTORY</em>, <em>DESTINATION</em>, <em>CFG</em><big>)</big><a class="reference internal" href="_modules/argparser.html#parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.parse_args" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">argparser.</tt><tt class="descname">parse_args</tt><big>(</big><em>version</em>, <em>LOG_RECAP</em>, <em>DESTINATION</em>, <em>CFG</em><big>)</big><a class="reference internal" href="_modules/argparser.html#parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#argparser.parse_args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse and return command line parameters.</p>
 <p>This function relies on the custom actions defined previousely.
 Custom actions will be called if the corresponding argument is
@@ -456,43 +494,7 @@ entered on the command line.</p>
 </dd></dl>
 
 </div>
-<span class="target" id="module-inventory"></span><div class="section" id="inventory">
-<h2>inventory<a class="headerlink" href="#inventory" title="Permalink to this headline">¶</a></h2>
-<p>Utility functions for inventory scripts.</p>
-<dl class="function">
-<dt id="inventory.format_output">
-<tt class="descclassname">inventory.</tt><tt class="descname">format_output</tt><big>(</big><em>output</em><big>)</big><a class="reference internal" href="_modules/inventory.html#format_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.format_output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return results in Ansible JSON syntax.</p>
-<p>Ansible requirements are documented here:
-<a class="reference external" href="http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html">http://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html</a></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="inventory.get_hostname">
-<tt class="descclassname">inventory.</tt><tt class="descname">get_hostname</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/inventory.html#get_hostname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.get_hostname" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return FQDN for this host in lower case.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="inventory.get_simple_hostname">
-<tt class="descclassname">inventory.</tt><tt class="descname">get_simple_hostname</tt><big>(</big><em>fqdn</em><big>)</big><a class="reference internal" href="_modules/inventory.html#get_simple_hostname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.get_simple_hostname" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert FQDN and return simple host name.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="inventory.read_cache">
-<tt class="descclassname">inventory.</tt><tt class="descname">read_cache</tt><big>(</big><em>cache_file</em><big>)</big><a class="reference internal" href="_modules/inventory.html#read_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.read_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read cache file and return content or False.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="inventory.write_cache">
-<tt class="descclassname">inventory.</tt><tt class="descname">write_cache</tt><big>(</big><em>cache_file</em>, <em>output</em><big>)</big><a class="reference internal" href="_modules/inventory.html#write_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#inventory.write_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Format and write inventory cache to file.</p>
-</dd></dl>
-
-</div>
-</div>
+<span class="target" id="module-inventory"></span></div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
@@ -511,27 +513,31 @@ entered on the command line.</p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to the ANTS Framework</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a><ul>
-<li><a class="reference internal" href="#communication">Communication</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants">Comparison of plain Ansible and Ansible Tower to ANTS</a></li>
+<li><a class="reference internal" href="#ants-framework">ANTS Framework</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#requirements">Requirements</a></li>
 <li><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li><a class="reference internal" href="#installing-ants-using-pip">Installing ants using pip</a></li>
+<li><a class="reference internal" href="#installing-ants-using-macos-pkg-installer">Installing ants using macOS .pkg installer</a></li>
+<li><a class="reference internal" href="#run-ants">Run ants</a></li>
 <li><a class="reference internal" href="#what-happened">What happened?</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#where-to-go-from-here">Where to go from here?</a><ul>
+<li><a class="reference internal" href="#where-to-go-from-here">Where to go from here?</a></li>
 <li><a class="reference internal" href="#look-at-the-configuration">Look at the configuration</a></li>
 <li><a class="reference internal" href="#run-other-roles">Run other roles</a></li>
-<li><a class="reference internal" href="#add-ssh-authentication-to-your-repo">Add ssh authentication to your repo</a></li>
-<li><a class="reference internal" href="#add-a-dynamic-inventory-source">Add a dynamic inventory source</a><ul>
+<li><a class="reference internal" href="#add-ssh-authentication-to-your-repository">Add ssh authentication to your repository</a></li>
+<li><a class="reference internal" href="#add-a-dynamic-inventory-source">Add a dynamic inventory source</a></li>
 <li><a class="reference internal" href="#group-layout-in-active-directory">Group Layout in Active Directory</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li><a class="reference internal" href="#what-else-do-i-need">What else do I need</a></li>
+<li><a class="reference internal" href="#communication">Communication</a></li>
+<li><a class="reference internal" href="#comparison-of-plain-ansible-and-ansible-tower-to-ants">Comparison of plain Ansible and Ansible Tower to ANTS</a><ul>
+<li><a class="reference internal" href="#what-does-ants-do-that-ansible-can-not">What does ANTS do, that Ansible can not?</a></li>
+<li><a class="reference internal" href="#what-does-ansible-or-ansible-tower-do-that-ants-does-not">What does Ansible or Ansible Tower do that ANTS does not?</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#development-documentation">Development Documentation</a><ul>
@@ -541,7 +547,6 @@ entered on the command line.</p>
 <li><a class="reference internal" href="#configer">configer</a></li>
 <li><a class="reference internal" href="#logger">logger</a></li>
 <li><a class="reference internal" href="#argparser">argparser</a></li>
-<li><a class="reference internal" href="#inventory">inventory</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
