@@ -78,16 +78,16 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <div class="section" id="installing-ants-using-pip">
 <h4>Installing ants using pip<a class="headerlink" href="#installing-ants-using-pip" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li>Make sure <tt class="docutils literal"><span class="pre">Git</span></tt> is installed on your machine</li>
-<li>Install the latest ants client using pip: <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">ants_client</span></tt></li>
+<li>Make sure <tt class="docutils literal"><span class="pre">Git</span></tt> is installed on your machine.</li>
+<li>Install the latest ants client using pip: <tt class="docutils literal"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">ants_client</span></tt>.</li>
 <li>Pip will install the ANTS client with a default configuration and put the executable in your path.</li>
 </ul>
 </div>
 <div class="section" id="installing-ants-using-macos-pkg-installer">
 <h4>Installing ants using macOS .pkg installer<a class="headerlink" href="#installing-ants-using-macos-pkg-installer" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
-<li>Download the latest .pkg installer from the <a class="reference external" href="https://github.com/ANTS-Framework/ants/releases/latest">releases page</a></li>
-<li>Execute the installer. This will take care of all dependencies</li>
+<li>Download the latest .pkg installer from the <a class="reference external" href="https://github.com/ANTS-Framework/ants/releases/latest">releases page</a>.</li>
+<li>Execute the installer. This will take care of all dependencies.</li>
 <li>A launch daemon will be installed, running <cite>ants</cite> every 15 minutes. It will trigger after the next restart.</li>
 </ul>
 </div>
@@ -102,8 +102,10 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 <div class="section" id="what-happened">
 <h4>What happened?<a class="headerlink" href="#what-happened" title="Permalink to this headline">¶</a></h4>
 <p>Running ANTS with the default configuration will use ansible-pull to clone
-<a class="reference external" href="https://github.com/ANTS-Framework/playbook">the ANTS playbook</a> from a github repository and execute an ansible run.</p>
+<a class="reference external" href="https://github.com/ANTS-Framework/playbook">the ANTS playbook</a> via https from a github repository and execute an ansible run.</p>
 <p>By default, this will add a message of the day to your macOS or Linux host. Logs of all the runs are stored at <tt class="docutils literal"><span class="pre">/var/log/ants</span></tt>.</p>
+<p>Also by default, ants will add github to your <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file. This is important for later, when you want to enable git clone
+using ssh.</p>
 </div>
 </div>
 <div class="section" id="where-to-go-from-here">
@@ -111,9 +113,10 @@ and released under the <a class="reference external" href="https://www.gnu.org/l
 </div>
 <div class="section" id="look-at-the-configuration">
 <h3>Look at the configuration<a class="headerlink" href="#look-at-the-configuration" title="Permalink to this headline">¶</a></h3>
-<p>Run <tt class="docutils literal"><span class="pre">ants</span> <span class="pre">-h</span></tt> to see all command line options or write your own configuration.</p>
 <p>Besides the default configuration file in the ants_client package, ANTS
 will also look for a local configuration file at <tt class="docutils literal"><span class="pre">/etc/ants/ants.cfg</span></tt>.</p>
+<p>You can use <tt class="docutils literal"><span class="pre">ants</span> <span class="pre">--show-config</span></tt> to list the current configuration and
+<tt class="docutils literal"><span class="pre">ants</span> <span class="pre">--initialize</span></tt> to generate a new configuration file at <tt class="docutils literal"><span class="pre">/ets/ants/ants.cfg</span></tt>.</p>
 <p>Do not modify the default configuration file as it might be overwritten when updating ANTS.</p>
 </div>
 <div class="section" id="run-other-roles">
@@ -126,12 +129,13 @@ Update <tt class="docutils literal"><span class="pre">main.yml</span></tt> to as
 </div>
 <div class="section" id="add-ssh-authentication-to-your-repository">
 <h3>Add ssh authentication to your repository<a class="headerlink" href="#add-ssh-authentication-to-your-repository" title="Permalink to this headline">¶</a></h3>
-<p>Ansible-pull cat clone a git repository using ssh. You can enable this by creating your own private playbook,
+<p>Ansible-pull can clone a git repository using ssh. You can enable this by creating your own private playbook,
 adding ssh authentication and a read only ssh key to the repository.
 Configure ANTS to use that key.</p>
 <p>By default, ANTS will look for a private key at <tt class="docutils literal"><span class="pre">/etc/ants/id_ants</span></tt></p>
 <p>You can generate a key with <tt class="docutils literal"><span class="pre">ssh-keygen</span> <span class="pre">-t</span> <span class="pre">rsa</span> <span class="pre">-b</span> <span class="pre">4096</span> <span class="pre">-N</span> <span class="pre">''</span> <span class="pre">-C</span> <span class="pre">&quot;ants</span> <span class="pre">client&quot;</span> <span class="pre">-f</span> <span class="pre">/etc/ants/id_ants</span></tt></p>
-<p>By default, ANTS is configured to run with strict host key checking disabled and will add the host key for github.com to your known_hosts file.
+<p>By default, ANTS is configured to run with strict host key checking disabled
+and will add the host key for your repo to your <tt class="docutils literal"><span class="pre">known_hosts</span></tt> file.
 You should change this in production. To do so, add <tt class="docutils literal"><span class="pre">ssh_stricthostkeychecking</span> <span class="pre">=</span> <span class="pre">True</span></tt> to your ants.cfg</p>
 </div>
 <div class="section" id="add-a-dynamic-inventory-source">
@@ -396,6 +400,7 @@ in config file.</p>
 <dt id="logger.log_recap">
 <tt class="descclassname">logger.</tt><tt class="descname">log_recap</tt><big>(</big><em>start_time</em>, <em>end_time</em>, <em>status_line</em><big>)</big><a class="reference internal" href="_modules/logger.html#log_recap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.log_recap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Log play recap in a dedicated form.</p>
+<p>Rollover old logfiles befor writing.</p>
 </dd></dl>
 
 <dl class="function">
@@ -416,9 +421,9 @@ could be found.</p>
 <dl class="function">
 <dt id="logger.status_file_rollover">
 <tt class="descclassname">logger.</tt><tt class="descname">status_file_rollover</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/logger.html#status_file_rollover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#logger.status_file_rollover" title="Permalink to this definition">¶</a></dt>
-<dd><p>Rotate log files for ok/changed/failed at the start of every ansible run</p>
-<p>Keep track of ok/changed/failed and play recap
-on a per run basis. Hence, rotate them at the start of each run.</p>
+<dd><p>Rotate log files at the start of every ansible run</p>
+<p>Keep track of ok/changed/failed on a per run basis.
+Hence, rotate them at the start of each run.</p>
 <p>Code for rotation based on
 <a class="reference external" href="https://stackoverflow.com/questions/4654915/rotate-logfiles-each-time-the-application-is-started-python">https://stackoverflow.com/questions/4654915/rotate-logfiles-each-time-the-application-is-started-python</a></p>
 </dd></dl>
